@@ -1,0 +1,31 @@
+{
+  "name": "The Working Copy",
+  "short_name": "Working Copy",
+  "description": "Ideas you can run. Practical notes from building agents, tools, and useful software.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F5EDE0",
+  "theme_color": "#F5EDE0",
+  "icons": [
+    {
+      "src": "/assets/icons/icon-192.efb52459f7.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/icon-512.c35d2f70d8.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/icon-maskable-512.c35d2f70d8.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

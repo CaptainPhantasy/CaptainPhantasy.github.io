@@ -1,0 +1,15 @@
+{
+  "publication": "The Working Copy",
+  "tagline": "Ideas you can run.",
+  "publisher": "Legacy AI",
+  "editions": [
+    {
+      "slug": "2026-11-17",
+      "date": "2026-11-17",
+      "title": "The harness is not the model.",
+      "excerpt": "A read-only audit for the layer between your editor and your model provider. Includes a runnable script and a prompt for your coding agent.",
+      "duration": "7:01",
+      "url": "/editions/2026-11-17/"
+    }
+  ]
+}

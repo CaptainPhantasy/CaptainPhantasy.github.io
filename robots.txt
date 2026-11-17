@@ -1,2 +1,3 @@
 User-agent: *
 Allow: /
+Sitemap: https://captainphantasy.github.io/sitemap.xml

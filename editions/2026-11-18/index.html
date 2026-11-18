@@ -20,7 +20,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="The Working Copy">
-<link rel="stylesheet" href="/assets/styles.75879bd044.css">
+<link rel="stylesheet" href="/assets/styles.cb3ae61d63.css">
 <link rel="canonical" href="https://theworkingcopy.floydslabs.com/editions/2026-11-18/">
 <meta property="og:url" content="https://theworkingcopy.floydslabs.com/editions/2026-11-18/">
 <meta property="og:image" content="https://theworkingcopy.floydslabs.com/assets/icons/icon-512.c35d2f70d8.png">
@@ -166,7 +166,7 @@
 <p>Kitesurf is a browser engine, which sounds boring until you remember why it exists. Agents spend their working lives fetching pages, clicking things, and reading what comes back. Most of them do it through tools nobody outside the vendor has ever inspected. Kitesurf was Cloudflare&#x27;s experimental take on that problem, and as of this week the experiment is public: the code is open source.</p>
 <p>That last detail matters more than the launch itself. An agent browser is a trust boundary. It executes what the web throws at it, often with credentials attached. For months the only honest answer to &#x27;is this thing safe?&#x27; was &#x27;Cloudflare says so.&#x27; Now the answer can be &#x27;I read it,&#x27; which is a much better class of answer.</p>
 <h2>Read it before you run it</h2>
-<p>The recommended move is exactly what the category label says: read a repository before you run it. Start by cloning the Kitesurf repository and doing nothing else. Open the entry points and trace one path: what happens when a page is fetched, where scripts execute, and what the engine is allowed to touch. You are not looking for bugs. You are building a mental map of the trust boundary your agents will cross.</p>
+<p>The recommended move is exactly what the category label says: read a repository before you run it. Start with the Kitesurf source from the project link in Cloudflare&#x27;s announcement, or use a repository you already have, and do nothing else. Open the entry points and trace one path: what happens when a page is fetched, where scripts execute, and what the engine is allowed to touch. You are not looking for bugs. You are building a mental map of the trust boundary your agents will cross.</p>
 <p>Then run it locally. Point a simple agent task at it, something like fetching one page you control and reporting what it found, and watch the engine&#x27;s own output as it works. The observable behavior you want is boring: the page loads, the agent reads it, nothing surprising happens in the logs. If you like what you see, the announcement says you can deploy your own instance on Cloudflare Workers, which gets you a Kitesurf you control end to end instead of one you rent.</p>
 <p>The comparison step is the payoff. Run the same agent task against your current browsing setup and against your local Kitesurf. Differences in what the two report about the same page are either features or red flags, and now you have the source to tell which.</p>
 <h2>What to do this week</h2>
@@ -188,9 +188,10 @@
           <img class="patch" src="/assets/brand/patch-320.7f34876db4.png" srcset="/assets/brand/patch-320.7f34876db4.png 320w, /assets/brand/patch-640.ee0c24400f.png 640w" sizes="120px" alt="Patch, the Working Copy badger, holding a code card" width="120" height="120">
           <div>
             <h2 id="run-title">Run this</h2>
-            <p>Inspect a repository&#x27;s entry points, docs, and biggest files before you clone it into your agent&#x27;s trust boundary.</p>
+            <p>Inspect any local repository&#x27;s entry points, docs, and biggest files before you let an agent use it.</p>
           </div>
         </div>
+        <div class="run-scope"><p class="section-note">The source for this edition is the Cloudflare blog post titled Kitesurf is now open source. It is an announcement, not a repository address. Use its project link if it names one, or run this check on your own checkout.</p></div><div class="run-scope"><h3>Or run it on your own repository</h3><pre class="output"><code>python3 inspect-repo.py /path/to/your/repo</code></pre></div>
         <div class="run-grid">
           <div class="run-step run-code">
             <h3>Copy snippet</h3>
@@ -244,13 +245,22 @@ print(&quot;Next: read the entry point and the tests before you run anything. Fi
           </div>
           <div class="run-step run-result">
             <h3>Check your result</h3>
-            <pre class="output">files: 42
+            <pre class="output">files: 4
 top level: README.md, package.json, src, tests
 readme: README.md
-  # Kitesurf
-  ## Getting started</pre>
+  # Example project
+  ## Getting started
+languages: .py 2, .md 1, .json 1
+largest source files:
+  README.md  56 bytes
+  tests/test_app.py  31 bytes
+  package.json  19 bytes
+  src/app.py  15 bytes
+Next: read the entry point and the tests before you run anything. File names are not a security review.</pre>
             <p class="mono-note">Tested 2026-11-18 · Python 3.15.2 · macOS 27.3</p>
+            <p class="provenance">Example output from a local test repository; your output will differ.</p>
             <p class="limit">This is a structural read, not a security audit. It does not inspect dependencies, build scripts, or runtime behavior.</p>
+            <p class="limit">This is a scope check, not a security audit.</p>
           </div>
         </div>
       </section>
@@ -265,11 +275,12 @@ readme: README.md
 
 1. Identify my operating system, editor or IDE and version, installed agent extensions, and the model provider route my agent uses.
 2. Run the check in ./inspect-repo.py, or inline the same logic. Do not install anything.
-3. Report the exact output, then explain which layer each finding belongs to: editor, harness, provider, edge, or toolchain.
-4. Compare the result with this source: Kitesurf is now open source (https://blog.cloudflare.com/kitesurf-open-source/).
-5. Do not print API keys, tokens, or credential-bearing URLs. Report hosts only.
-6. If something is misconfigured, propose the smallest change. List exact files and commands, and wait for my approval before editing anything.
-7. Finish with a one-page report: current state, risk, recommended change, verification step, and what you could not verify.</code></pre>
+3. Scope: Use a local checkout of my repository. Do not clone or run the article&#x27;s topic repository unless I explicitly ask.
+4. Report the exact output, then explain which layer each finding belongs to: editor, harness, provider, edge, or toolchain.
+5. Compare the result with this source: Kitesurf is now open source (https://blog.cloudflare.com/kitesurf-open-source/).
+6. Do not print API keys, tokens, or credential-bearing URLs. Report hosts only.
+7. If something is misconfigured, propose the smallest change. List exact files and commands, and wait for my approval before editing anything.
+8. Finish with a one-page report: current state, risk, recommended change, verification step, and what you could not verify.</code></pre>
           <button class="btn-orange" data-copy-target="agent-prompt">
             <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
             <span>Copy agent prompt</span>
@@ -290,9 +301,6 @@ readme: README.md
         <h2>Sources</h2>
         <ul class="source-list source-list-inline">
           <li><a href="https://blog.cloudflare.com/kitesurf-open-source/">Kitesurf is now open source<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
-          <li><a href="https://blog.cloudflare.com/quad9-withdrawal-from-france/">Quad9’s withdrawal from France: A canary in the coal mine<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
-          <li><a href="https://github.blog/changelog/2026-11-17-openais-gpt-6-2-astra-and-gpt-6-2-sol-now-available">OpenAI’s GPT-6.2 Astra and GPT-6.2 Sol now available<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
-          <li><a href="https://vercel.com/changelog/standard-build-billing-new-teams">Standard builds move to usage-based billing for new teams<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
           <li><a href="/editions/2026-11-18/run/inspect-repo.py">The runnable example used in this article<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a></li>
         </ul>
       </section>

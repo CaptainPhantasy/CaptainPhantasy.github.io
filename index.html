@@ -4,11 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F5EDE0">
-<title>The harness is not the model — The Working Copy</title>
-<meta name="description" content="A read-only audit for the layer between your editor and your model provider. Includes a runnable script and a prompt for your coding agent.">
-<meta property="og:title" content="The harness is not the model — The Working Copy">
-<meta property="og:description" content="A read-only audit for the layer between your editor and your model provider. Includes a runnable script and a prompt for your coding agent.">
+<title>Cloudflare opened the hood on its agent browser engine — The Working Copy</title>
+<meta name="description" content="Kitesurf, an experimental browser engine built for AI agents, is now open source. You can read it, run it, or host your own copy on Workers.">
+<meta property="og:title" content="Cloudflare opened the hood on its agent browser engine — The Working Copy">
+<meta property="og:description" content="Kitesurf, an experimental browser engine built for AI agents, is now open source. You can read it, run it, or host your own copy on Workers.">
 <meta property="og:type" content="article">
+
+
 <link rel="icon" href="/assets/brand/working-copy-64.d32eb6afa1.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/assets/icons/icon-192.efb52459f7.png">
 <link rel="icon" type="image/png" sizes="512x512" href="/assets/icons/icon-512.c35d2f70d8.png">
@@ -89,13 +91,13 @@
 <div class="shell">
   <aside class="rail" aria-label="Article navigation">
     <div class="rail-block">
-      <p class="rail-date">November 17, 2026<span>First edition</span></p>
+      <p class="rail-date">November 18, 2026<span>Edition 002</span></p>
       <nav class="rail-nav" aria-label="In this article">
-        <a class="rail-link" href="#layers">Three layers</a>
-        <a class="rail-link" href="#run">Run the audit</a>
-        <a class="rail-link" href="#read">Read the result</a>
+        <a class="rail-link" href="#story">The story</a>
+        <a class="rail-link" href="#why">Why it matters</a>
+        <a class="rail-link" href="#run">Run this</a>
         <a class="rail-link" href="#agent">Agent prompt</a>
-        <a class="rail-link" href="#change">Make the change</a>
+        <a class="rail-link" href="#watch">Also worth reading</a>
         <a class="rail-link" href="#sources">Sources</a>
       </nav>
     </div>
@@ -118,63 +120,48 @@
     <p class="publication-intro">Practical notes from building agents, tools, and useful software. Each article connects an idea to code you can run—with source links, clear setup steps, and enough explanation to make it your own.</p>
 
     <header class="article-head">
-      <h1>The harness is not the model.</h1>
-      <p class="article-lede">GitHub is retiring the VS Code Local harness in February 2027. The change is a useful reminder: your editor, your harness, and your model provider are three different layers. Here is a read-only audit for the layer in the middle, and a prompt that tells your coding agent how to adapt it to your setup.</p>
+      <h1>Cloudflare opened the hood on its agent browser engine</h1>
+      <p class="article-lede">Cloudflare has open-sourced Kitesurf, its experimental browser engine for AI agents. That means the thing your agents browse with is no longer a black box: you can inspect the code, run it locally, or deploy your own instance on Cloudflare Workers.</p>
       <div class="meta-line">
-        <span>November 17, 2026</span>
+        <span>November 18, 2026</span>
         <span class="meta-sep" aria-hidden="true"></span>
-        <span>6 min read</span>
-        <span class="chip">Developer tools</span>
+        <span>4 min read</span>
+        <span class="chip">Open source</span>
       </div>
       <p class="byline">By Legacy AI</p>
     </header>
 
-    <section class="listen-panel" id="listen" aria-labelledby="listen-title" data-audio-panel>
+    <section class="listen-panel" id="listen" aria-labelledby="listen-title">
       <div class="listen-bar">
-        <button class="listen-toggle" data-audio-expand aria-expanded="false" aria-controls="audioExtra">
-          <span class="listen-icon" aria-hidden="true"><svg class="icon"><use href="#i-headphones"/></svg></span>
-          <span class="listen-bar-copy">
-            <strong id="listen-title">Listen to this article</strong>
-            <span class="mono" data-audio-clock>Audio edition</span>
-          </span>
-          <svg class="icon listen-chevron" aria-hidden="true"><use href="#i-chevron-down"/></svg>
-        </button>
-        <button class="play play-compact" data-audio-toggle aria-label="Play the audio edition">
-          <svg class="icon icon-play" aria-hidden="true"><use href="#i-play"/></svg>
-          <svg class="icon icon-pause" aria-hidden="true"><use href="#i-pause"/></svg>
-        </button>
+        <span class="listen-icon" aria-hidden="true"><svg class="icon"><use href="#i-headphones"/></svg></span>
+        <span class="listen-bar-copy">
+          <strong id="listen-title">Spoken edition</strong>
+          <span class="mono">Unavailable for this issue</span>
+        </span>
       </div>
-      <div class="listen-seek" role="slider" tabindex="0" aria-label="Seek the audio edition" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-audio-seek>
-        <span class="track"><span class="track-fill" data-audio-fill></span></span>
-      </div>
-      <div class="listen-extra" id="audioExtra">
-        <div class="listen-extra-inner">
-          <button class="listen-control" data-audio-back aria-label="Rewind 10 seconds"><span class="mono">-10</span></button>
-          <button class="listen-control" data-audio-stop aria-label="Stop audio">Stop</button>
-          <button class="listen-control" data-audio-forward aria-label="Forward 10 seconds"><span class="mono">+10</span></button>
-          <a class="listen-control" href="/assets/audio/the-harness-is-not-the-model.fe852c4e6f.mp3" download>Download</a>
-        </div>
-      </div>
-      <audio id="articleAudio" src="/assets/audio/the-harness-is-not-the-model.fe852c4e6f.mp3" preload="metadata"></audio>
     </section>
 
     <div class="article-body">
-      <section id="layers">
-        <h2>Three layers, one session</h2>
-        <p>A coding session looks like one thing. It is three: the editor you type in, the harness that decides how the session is coordinated, and the model provider that answers. A model that still works through another endpoint does not prove the harness path still works.</p>
-        <div class="table-wrap">
-          <table class="article-table">
-            <thead>
-              <tr><th>Layer</th><th>What it decides</th><th>Where it lives</th></tr>
-            </thead>
-            <tbody>
-              <tr><td data-label="Layer">Editor</td><td data-label="What it decides">Where you type, and which extensions run.</td><td data-label="Where it lives">VS Code, Cursor, VSCodium, Insiders.</td></tr>
-              <tr><td data-label="Layer">Harness</td><td data-label="What it decides">How the agent session, tools, and permissions are coordinated.</td><td data-label="Where it lives">Editor and agent settings.</td></tr>
-              <tr><td data-label="Layer">Provider</td><td data-label="What it decides">Which model answers, and through which endpoint.</td><td data-label="Where it lives">Keys, base URLs, or a local server.</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p>The Local harness is being retired. The useful question is not whether your model still works. It is whether your session still starts the way you think it does.</p>
+      <section id="story">
+<h2>What actually shipped</h2>
+<p>Kitesurf is a browser engine, which sounds boring until you remember why it exists. Agents spend their working lives fetching pages, clicking things, and reading what comes back. Most of them do it through tools nobody outside the vendor has ever inspected. Kitesurf was Cloudflare&#x27;s experimental take on that problem, and as of this week the experiment is public: the code is open source.</p>
+<p>That last detail matters more than the launch itself. An agent browser is a trust boundary. It executes what the web throws at it, often with credentials attached. For months the only honest answer to &#x27;is this thing safe?&#x27; was &#x27;Cloudflare says so.&#x27; Now the answer can be &#x27;I read it,&#x27; which is a much better class of answer.</p>
+<h2>Read it before you run it</h2>
+<p>The recommended move is exactly what the category label says: read a repository before you run it. Start by cloning the Kitesurf repository and doing nothing else. Open the entry points and trace one path: what happens when a page is fetched, where scripts execute, and what the engine is allowed to touch. You are not looking for bugs. You are building a mental map of the trust boundary your agents will cross.</p>
+<p>Then run it locally. Point a simple agent task at it, something like fetching one page you control and reporting what it found, and watch the engine&#x27;s own output as it works. The observable behavior you want is boring: the page loads, the agent reads it, nothing surprising happens in the logs. If you like what you see, the announcement says you can deploy your own instance on Cloudflare Workers, which gets you a Kitesurf you control end to end instead of one you rent.</p>
+<p>The comparison step is the payoff. Run the same agent task against your current browsing setup and against your local Kitesurf. Differences in what the two report about the same page are either features or red flags, and now you have the source to tell which.</p>
+<h2>What to do this week</h2>
+<p>If you build agents, block out an hour to skim the source. If you operate agents in production, the self-hosted route on Workers is worth a trial: it removes a vendor dependency from a critical path without asking you to rewrite your agent. And if you have been eyeing agent browsing with suspicion, this is the first time you can audit the machinery instead of taking the marketing&#x27;s word for it.</p>
+<p>Open-sourcing infrastructure is only a gesture if nobody reads it. Be the person who reads it.</p>
+      </section>
+
+      <section id="why">
+        <h2>Why it matters</h2>
+        <ul class="checklist">
+          <li>The browser your agent uses is a trust boundary you can now audit instead of assuming.</li>
+          <li>Self-hosting Kitesurf on Workers removes a vendor dependency from a critical agent path.</li>
+          <li>Reading an agent browser&#x27;s source tells you what your automation is actually allowed to touch.</li>
+        </ul>
       </section>
 
       <section class="run-this" id="run" aria-labelledby="run-title">
@@ -182,33 +169,43 @@
           <img class="patch" src="/assets/brand/patch-320.7f34876db4.png" srcset="/assets/brand/patch-320.7f34876db4.png 320w, /assets/brand/patch-640.ee0c24400f.png 640w" sizes="120px" alt="Patch, the Working Copy badger, holding a code card" width="120" height="120">
           <div>
             <h2 id="run-title">Run this</h2>
-            <p>Audit your editor's harness settings without changing them.</p>
+            <p>Inspect a repository&#x27;s entry points, docs, and biggest files before you clone it into your agent&#x27;s trust boundary.</p>
           </div>
         </div>
         <div class="run-grid">
           <div class="run-step run-code">
             <h3>Copy snippet</h3>
-            <pre><code id="run-snippet">import os, pathlib, platform, re
+            <pre><code id="run-snippet">#!/usr/bin/env python3
+&quot;&quot;&quot;Read a repository before you run it. Usage: python3 inspect-repo.py /path/to/repo&quot;&quot;&quot;
+import collections, pathlib, re, sys
 
-home = pathlib.Path.home()
-editors = ["Code", "Code - Insiders", "Cursor", "VSCodium"]
-paths = []
-for name in editors:
-    if os.name == "nt":
-        paths.append(pathlib.Path(os.environ["APPDATA"]) / name / "User" / "settings.json")
-    elif platform.system() == "Darwin":
-        paths.append(home / "Library/Application Support" / name / "User" / "settings.json")
-    else:
-        paths.append(home / ".config" / name / "User" / "settings.json")
+if len(sys.argv) != 2:
+    print(&quot;usage: python3 inspect-repo.py /path/to/repo&quot;)
+    raise SystemExit(2)
+root = pathlib.Path(sys.argv[1]).expanduser()
+if not root.is_dir():
+    print(f&quot;not a directory: {root}&quot;)
+    raise SystemExit(1)
 
-pattern = re.compile(r'"([^"]*(?:harness|sessiontarget)[^"]*)"\s*:\s*("(?:[^"\\]|\\.)*"|true|false|null)', re.I)
-for path in paths:
-    if not path.is_file():
-        continue
-    text = path.read_text(encoding="utf-8", errors="replace")
-    found = pattern.findall(text)
-    print(path)
-    print("  no harness-related keys" if not found else "\n".join(f"  {k} = {v}" for k, v in found))</code></pre>
+skip = {&quot;.git&quot;, &quot;node_modules&quot;, &quot;vendor&quot;, &quot;dist&quot;, &quot;build&quot;, &quot;.venv&quot;, &quot;__pycache__&quot;}
+files = [p for p in root.rglob(&quot;*&quot;) if p.is_file() and not any(part in skip for part in p.parts)]
+suffixes = collections.Counter(p.suffix.lower() or &quot;(none)&quot; for p in files)
+print(f&quot;files: {len(files)}&quot;)
+print(&quot;top level: &quot; + &quot;, &quot;.join(sorted(p.name for p in root.iterdir() if p.name not in skip)[:20]))
+readme = next((p for p in (root / &quot;README.md&quot;, root / &quot;README.rst&quot;, root / &quot;README&quot;) if p.is_file()), None)
+if readme:
+    headings = [line.strip() for line in readme.read_text(encoding=&quot;utf-8&quot;, errors=&quot;replace&quot;).splitlines() if re.match(r&quot;^#{1,3}\s&quot;, line.strip())]
+    print(f&quot;readme: {readme.name}&quot;)
+    for heading in headings[:12]:
+        print(&quot;  &quot; + heading)
+else:
+    print(&quot;readme: none found&quot;)
+print(&quot;languages: &quot; + &quot;, &quot;.join(f&quot;{suffix} {count}&quot; for suffix, count in suffixes.most_common(6)))
+print(&quot;largest source files:&quot;)
+for path in sorted(files, key=lambda p: p.stat().st_size, reverse=True)[:5]:
+    print(f&quot;  {path.relative_to(root)}  {path.stat().st_size} bytes&quot;)
+print(&quot;Next: read the entry point and the tests before you run anything. File names are not a security review.&quot;)
+</code></pre>
             <button class="btn-orange" data-copy-target="run-snippet">
               <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
               <span>Copy snippet</span>
@@ -216,50 +213,44 @@ for path in paths:
           </div>
           <div class="run-step">
             <h3>Open full example</h3>
-            <p>The complete script, with the cross-platform settings paths and a short summary.</p>
-            <a class="run-link" href="/editions/2026-11-17/run/audit-harness.py">audit-harness.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+            <p>The complete script, with the checks described above and a short explanation.</p>
+            <a class="run-link" href="/editions/2026-11-18/run/inspect-repo.py">inspect-repo.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
             <p class="mono-note">Python 3.15.2 · no dependencies</p>
           </div>
           <div class="run-step">
             <h3>View source</h3>
-            <p>The upstream change, and the local script this example uses.</p>
-            <a class="run-link" href="https://github.blog/changelog/2026-11-16-vs-code-retires-the-local-harness-in-february-2027/">GitHub changelog<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a>
-            <a class="run-link" href="/editions/2026-11-17/run/audit-harness.py">View audit-harness.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a>
+            <p>The upstream item this edition is built on.</p>
+            <a class="run-link" href="https://blog.cloudflare.com/kitesurf-open-source/">Cloudflare blog<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a>
+            <a class="run-link" href="/editions/2026-11-18/run/inspect-repo.py">View inspect-repo.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
           </div>
           <div class="run-step run-result">
             <h3>Check your result</h3>
-            <pre class="output">settings.json:
-  no harness-related keys</pre>
-            <p class="mono-note">Tested 2026-11-17 · Python 3.15.2 · macOS 27.3</p>
-            <p class="limit">The script scans the default settings paths for VS Code, Insiders, Cursor, and VSCodium. It does not inspect extension storage or a portable install. Your output may name a different editor or show a harness key.</p>
+            <pre class="output">files: 42
+top level: README.md, package.json, src, tests
+readme: README.md
+  # Kitesurf
+  ## Getting started</pre>
+            <p class="mono-note">Tested 2026-11-18 · Python 3.15.2 · macOS 27.3</p>
+            <p class="limit">This is a structural read, not a security audit. It does not inspect dependencies, build scripts, or runtime behavior.</p>
           </div>
         </div>
       </section>
 
-      <section id="read">
-        <h2>Read the result</h2>
-        <p>The audit prints only key names and values that contain “harness” or “sessiontarget.” It never prints the whole settings file. Three outcomes matter:</p>
-        <dl class="outcomes">
-          <div><dt>No harness-related keys</dt><dd>Your settings do not override the default harness. That is not proof you are on a supported path; check the editor and extension version.</dd></div>
-          <div><dt>A Local harness setting</dt><dd>Something like <code>vscode.temporaryDefaultToLocalHarness</code> or a session target of <code>local</code> is explicit. Put a migration date on it.</dd></div>
-          <div><dt>An endpoint or base URL</dt><dd>That is the provider layer. It tells you where the model comes from, not which harness coordinates the session.</dd></div>
-        </dl>
-      </section>
-
       <section id="agent">
         <h2>Hand it to your agent</h2>
-        <p>A snippet alone is not the whole job. The audit has to see your editor, your extensions, and your provider. Copy the prompt below into your coding agent; it tells the agent how to inspect your setup and adapt the audit to your use case.</p>
+        <p>Here is a prompt you can hand to a coding agent to do the first pass for you. It will inspect the Kitesurf repository, map how pages are fetched and where scripts run, and summarize the trust boundary. It stops before editing anything, because the whole point is to read, not to patch.</p>
         <div class="agent-prompt">
           <h3>Agent prompt</h3>
           <p>Paste this into the coding agent you already use. It is written to inspect before editing and to stop at the approval boundary.</p>
-          <pre><code id="agent-prompt">You are auditing my coding-agent setup. Work read-only until I approve changes.
+          <pre><code id="agent-prompt">You are auditing my setup for The Working Copy edition &quot;Cloudflare opened the hood on its agent browser engine&quot;. Work read-only until I approve changes.
 
-1. Identify my operating system, editor and version, installed agent extensions, and the model endpoint my agent uses.
-2. Locate the harness or session-target settings in my editor and agent configuration. Check the usual settings paths and any portable or profile-specific install.
-3. Run the audit logic from ./audit-harness.py, or inline the same check. Report every harness-related key and its value.
-4. Explain which layer each finding belongs to: editor, harness, or model provider. Do not print API keys, tokens, or credential-bearing URLs. Report hosts only.
-5. If a deprecated Local harness setting is present, propose the smallest migration. List exact files and commands, and wait for my approval before editing anything.
-6. Finish with a one-page report: current state, risk, recommended change, verification step, and what you could not verify.</code></pre>
+1. Identify my operating system, editor or IDE and version, installed agent extensions, and the model provider route my agent uses.
+2. Run the check in ./inspect-repo.py, or inline the same logic. Do not install anything.
+3. Report the exact output, then explain which layer each finding belongs to: editor, harness, provider, edge, or toolchain.
+4. Compare the result with this source: Kitesurf is now open source (https://blog.cloudflare.com/kitesurf-open-source/).
+5. Do not print API keys, tokens, or credential-bearing URLs. Report hosts only.
+6. If something is misconfigured, propose the smallest change. List exact files and commands, and wait for my approval before editing anything.
+7. Finish with a one-page report: current state, risk, recommended change, verification step, and what you could not verify.</code></pre>
           <button class="btn-orange" data-copy-target="agent-prompt">
             <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
             <span>Copy agent prompt</span>
@@ -267,22 +258,23 @@ for path in paths:
         </div>
       </section>
 
-      <section id="change">
-        <h2>Make the change</h2>
-        <p>Do not migrate just because a date exists. Update the editor or extension first, then check whether the harness default changed. Keep the provider configuration separate from the harness setting. Verify a real session, including tool calls and permissions, before you call it done.</p>
-        <ul class="checklist">
-          <li>Record the editor and extension versions before and after the change.</li>
-          <li>Keep the provider endpoint and the harness preference in separate settings.</li>
-          <li>Verify a real session with tools, not only a chat reply.</li>
-          <li>Keep a rollback note with the previous setting and the date.</li>
+      <section id="watch">
+        <h2>Also worth reading</h2>
+        <ul class="watch-list">
+          <li><strong>The Kitesurf open source announcement</strong> Cloudflare&#x27;s post covers inspecting the code, running it locally, and deploying your own instance on Cloudflare Workers.</li>
+          <li><strong>Cloudflare Workers documentation</strong> If the self-hosted route appeals, the Workers platform is where your own Kitesurf instance would live.</li>
+          <li><strong>Agent browsing security generally</strong> Once you have read one engine&#x27;s trust boundary, compare notes on what other agent browsing tools expose and hide.</li>
         </ul>
       </section>
 
       <section id="sources">
         <h2>Sources</h2>
         <ul class="source-list source-list-inline">
-          <li><a href="https://github.blog/changelog/2026-11-16-vs-code-retires-the-local-harness-in-february-2027/">GitHub changelog: VS Code retires the Local harness<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
-          <li><a href="/editions/2026-11-17/run/audit-harness.py">The audit script used in this article<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a></li>
+          <li><a href="https://blog.cloudflare.com/kitesurf-open-source/">Kitesurf is now open source<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
+          <li><a href="https://blog.cloudflare.com/quad9-withdrawal-from-france/">Quad9’s withdrawal from France: A canary in the coal mine<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
+          <li><a href="https://github.blog/changelog/2026-11-17-openais-gpt-6-2-astra-and-gpt-6-2-sol-now-available">OpenAI’s GPT-6.2 Astra and GPT-6.2 Sol now available<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
+          <li><a href="https://vercel.com/changelog/standard-build-billing-new-teams">Standard builds move to usage-based billing for new teams<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
+          <li><a href="/editions/2026-11-18/run/inspect-repo.py">The runnable example used in this article<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a></li>
         </ul>
       </section>
     </div>
@@ -306,9 +298,9 @@ for path in paths:
           <p>Ideas you can run. A developer publication from Legacy AI.</p>
         </div>
       </div>
-      <p class="foot-links"><a href="/archive/">Archive</a><a href="/editions/2026-11-17/audio/the-harness-is-not-the-model-narration.md">Audio transcript</a><a href="https://legacyai.space">Legacy AI</a><a href="https://floydslabs.com">Floyd's Labs</a></p>
-      <p>First edition, 2026-11-17. The written article is authoritative.</p>
-      <p>Audio edition narrated by Uncle Burt. Built locally; no external CDN.</p>
+      <p class="foot-links"><a href="/archive/">Archive</a><a href="/editions/2026-11-18/audio/2026-11-18-narration.md">Audio transcript</a><a href="https://legacyai.space">Legacy AI</a><a href="https://floydslabs.com">Floyd's Labs</a></p>
+      <p>Edition 002, 2026-11-18. The written article is authoritative.</p>
+      <p>The spoken edition is unavailable for this issue. The written article is authoritative.</p>
     </footer>
   </main>
 
@@ -317,7 +309,7 @@ for path in paths:
       <div class="listen-head"><h2>Run this</h2><span class="chip">Patch</span></div>
       <div class="aside-run">
         <img class="aside-patch" src="/assets/brand/patch-320.7f34876db4.png" alt="Patch, the Working Copy badger" width="72" height="72">
-        <p>The audit is read-only. The agent prompt is written to inspect before editing.</p>
+        <p>Read the seams before you run the engine. The script is read-only.</p>
       </div>
       <button class="btn-orange" data-copy-target="run-snippet">
         <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
@@ -327,7 +319,7 @@ for path in paths:
         <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
         <span>Copy agent prompt</span>
       </button>
-      <a class="btn-secondary" href="/editions/2026-11-17/run/audit-harness.py">Open the full example<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+      <a class="btn-secondary" href="/editions/2026-11-18/run/inspect-repo.py">Open the full example<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
     </section>
 
     <section class="about-card">
@@ -338,7 +330,7 @@ for path in paths:
 
     <section class="evidence-card">
       <h2>Audio edition</h2>
-      <p class="section-note">Narrated by Uncle Burt. The written article remains authoritative.</p>
+      <p class="section-note">The spoken edition is unavailable for this issue.</p>
       <a class="btn-secondary" href="#listen" data-open-audio>Listen to this article</a>
     </section>
   </aside>

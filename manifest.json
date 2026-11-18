@@ -4,6 +4,14 @@
   "publisher": "Legacy AI",
   "editions": [
     {
+      "slug": "2026-11-18",
+      "date": "2026-11-18",
+      "title": "Cloudflare opened the hood on its agent browser engine",
+      "excerpt": "Kitesurf, an experimental browser engine built for AI agents, is now open source. You can read it, run it, or host your own copy on Workers.",
+      "duration": "pending",
+      "url": "/editions/2026-11-18/"
+    },
+    {
       "slug": "2026-11-17",
       "date": "2026-11-17",
       "title": "The harness is not the model.",

@@ -131,14 +131,33 @@
       <p class="byline">By Legacy AI</p>
     </header>
 
-    <section class="listen-panel" id="listen" aria-labelledby="listen-title">
+    <section class="listen-panel" id="listen" aria-labelledby="listen-title" data-audio-panel>
       <div class="listen-bar">
-        <span class="listen-icon" aria-hidden="true"><svg class="icon"><use href="#i-headphones"/></svg></span>
-        <span class="listen-bar-copy">
-          <strong id="listen-title">Spoken edition</strong>
-          <span class="mono">Unavailable for this issue</span>
-        </span>
+        <button class="listen-toggle" data-audio-expand aria-expanded="false" aria-controls="audioExtra">
+          <span class="listen-icon" aria-hidden="true"><svg class="icon"><use href="#i-headphones"/></svg></span>
+          <span class="listen-bar-copy">
+            <strong id="listen-title">Listen to this article</strong>
+            <span class="mono" data-audio-clock>7:31</span>
+          </span>
+          <svg class="icon listen-chevron" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+        </button>
+        <button class="play play-compact" data-audio-toggle aria-label="Play the audio edition">
+          <svg class="icon icon-play" aria-hidden="true"><use href="#i-play"/></svg>
+          <svg class="icon icon-pause" aria-hidden="true"><use href="#i-pause"/></svg>
+        </button>
       </div>
+      <div class="listen-seek" role="slider" tabindex="0" aria-label="Seek the audio edition" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-audio-seek>
+        <span class="track"><span class="track-fill" data-audio-fill></span></span>
+      </div>
+      <div class="listen-extra" id="audioExtra">
+        <div class="listen-extra-inner">
+          <button class="listen-control" data-audio-back aria-label="Rewind 10 seconds"><span class="mono">-10</span></button>
+          <button class="listen-control" data-audio-stop aria-label="Stop audio">Stop</button>
+          <button class="listen-control" data-audio-forward aria-label="Forward 10 seconds"><span class="mono">+10</span></button>
+          <a class="listen-control" href="/assets/audio/2026-11-18.a8be12fc91.mp3" download>Download</a>
+        </div>
+      </div>
+      <audio id="articleAudio" src="/assets/audio/2026-11-18.a8be12fc91.mp3" preload="metadata"></audio>
     </section>
 
     <div class="article-body">
@@ -300,7 +319,7 @@ readme: README.md
       </div>
       <p class="foot-links"><a href="/archive/">Archive</a><a href="/editions/2026-11-18/audio/2026-11-18-narration.md">Audio transcript</a><a href="https://legacyai.space">Legacy AI</a><a href="https://floydslabs.com">Floyd's Labs</a></p>
       <p>Edition 002, 2026-11-18. The written article is authoritative.</p>
-      <p>The spoken edition is unavailable for this issue. The written article is authoritative.</p>
+      <p>Audio edition narrated by Uncle Burt. Built locally; no external CDN.</p>
     </footer>
   </main>
 
@@ -330,7 +349,7 @@ readme: README.md
 
     <section class="evidence-card">
       <h2>Audio edition</h2>
-      <p class="section-note">The spoken edition is unavailable for this issue.</p>
+      <p class="section-note">Narrated by Uncle Burt. The written article remains authoritative.</p>
       <a class="btn-secondary" href="#listen" data-open-audio>Listen to this article</a>
     </section>
   </aside>

@@ -4,6 +4,14 @@
   "publisher": "Legacy AI",
   "editions": [
     {
+      "slug": "2026-11-19",
+      "date": "2026-11-19",
+      "title": "GitHub CLI can finally wait for a pull request to change",
+      "excerpt": "gh v2.105.0 adds event streams, so scripts and agents can subscribe to reviews and checks instead of sleeping in a polling loop.",
+      "duration": "7:34",
+      "url": "/editions/2026-11-19/"
+    },
+    {
       "slug": "2026-11-18",
       "date": "2026-11-18",
       "title": "Cloudflare opened the hood on its agent browser engine",

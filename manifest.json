@@ -4,6 +4,14 @@
   "publisher": "Legacy AI",
   "editions": [
     {
+      "slug": "2026-11-20",
+      "date": "2026-11-20",
+      "title": "GitHub's new PR overview stops optional checks from crying wolf",
+      "excerpt": "The improved Overview page no longer lets failed optional checks masquerade as blockers, which makes it a fine day to find the automation in your repo that stares at pull requests.",
+      "duration": "7:48",
+      "url": "/editions/2026-11-20/"
+    },
+    {
       "slug": "2026-11-19",
       "date": "2026-11-19",
       "title": "GitHub CLI can finally wait for a pull request to change",

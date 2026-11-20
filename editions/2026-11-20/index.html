@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F5EDE0">
+<title>GitHub&#x27;s new PR overview stops optional checks from crying wolf — The Working Copy</title>
+<meta name="description" content="The improved Overview page no longer lets failed optional checks masquerade as blockers, which makes it a fine day to find the automation in your repo that stares at pull requests.">
+<meta property="og:title" content="GitHub&#x27;s new PR overview stops optional checks from crying wolf — The Working Copy">
+<meta property="og:description" content="The improved Overview page no longer lets failed optional checks masquerade as blockers, which makes it a fine day to find the automation in your repo that stares at pull requests.">
+<meta property="og:type" content="article">
+
+
+<link rel="icon" href="/assets/brand/working-copy-64.d32eb6afa1.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/icons/icon-192.efb52459f7.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/assets/icons/icon-512.c35d2f70d8.png">
+<link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon-180.6fdb141b90.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="The Working Copy">
+<link rel="stylesheet" href="/assets/styles.129b916d68.css">
+<link rel="canonical" href="https://theworkingcopy.floydslabs.com/editions/2026-11-20/">
+<meta property="og:url" content="https://theworkingcopy.floydslabs.com/editions/2026-11-20/">
+<meta property="og:image" content="https://theworkingcopy.floydslabs.com/assets/icons/icon-512.c35d2f70d8.png">
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false"><symbol id="i-arrow-up-right" viewBox="0 0 24 24"><path d="M7 7h10v10" />
+  <path d="M7 17 17 7" /></symbol>
+<symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4" />
+  <path d="M16 2v4" />
+  <rect width="18" height="18" x="3" y="4" rx="2" />
+  <path d="M3 10h18" /></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" /></symbol>
+<symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></symbol>
+<symbol id="i-chevron-up" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6" /></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><path d="M12 6v6l4 2" />
+  <circle cx="12" cy="12" r="10" /></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 15V3" />
+  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+  <path d="m7 10 5 5 5-5" /></symbol>
+<symbol id="i-external-link" viewBox="0 0 24 24"><path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></symbol>
+<symbol id="i-headphones" viewBox="0 0 24 24"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" /></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" /></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><rect x="14" y="3" width="5" height="18" rx="1" />
+  <rect x="5" y="3" width="5" height="18" rx="1" /></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z" /></symbol>
+<symbol id="i-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2" />
+  <rect width="20" height="8" x="2" y="14" rx="2" ry="2" />
+  <line x1="6" x2="6.01" y1="6" y2="6" />
+  <line x1="6" x2="6.01" y1="18" y2="18" /></symbol>
+<symbol id="i-share-2" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3" />
+  <circle cx="6" cy="12" r="3" />
+  <circle cx="18" cy="19" r="3" />
+  <line x1="8.59" x2="15.42" y1="13.51" y2="17.49" />
+  <line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></symbol>
+<symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+  <path d="m9 12 2 2 4-4" /></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18" />
+  <path d="m6 6 12 12" /></symbol></svg>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="topbar" id="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#main" aria-label="The Working Copy">
+      <img class="brand-logo" src="/assets/brand/working-copy-256.aff5e3278e.png" alt="" width="36" height="36">
+      <span class="brand-name">The Working Copy</span>
+    </a>
+    <div class="top-actions">
+      <a class="top-link" href="/archive/">Archive</a>
+      <a class="top-link" href="https://legacyai.space">Legacy AI</a>
+      <a class="top-link" href="https://floydslabs.com">Floyd's Labs</a>
+      <button class="icon-btn" data-open-audio aria-label="Listen to this article">
+        <svg class="icon" aria-hidden="true"><use href="#i-headphones"/></svg>
+      </button>
+      <button class="icon-btn" id="shareTop" aria-label="Share this article">
+        <svg class="icon" aria-hidden="true"><use href="#i-share-2"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <aside class="rail" aria-label="Article navigation">
+    <div class="rail-block">
+      <p class="rail-date">November 20, 2026<span>Edition 004</span></p>
+      <nav class="rail-nav" aria-label="In this article">
+        <a class="rail-link" href="#story">The story</a>
+        <a class="rail-link" href="#why">Why it matters</a>
+        <a class="rail-link" href="#run">Run this</a>
+        <a class="rail-link" href="#agent">Agent prompt</a>
+        <a class="rail-link" href="#watch">Also worth reading</a>
+        <a class="rail-link" href="#sources">Sources</a>
+      </nav>
+    </div>
+    <div class="rail-block">
+      <p class="rail-label">Published by</p>
+      <a class="publisher-link" href="https://legacyai.space"><img src="/assets/brand/legacy-ai-256.001d2635f0.png" alt="" width="32" height="32">Legacy AI</a>
+      <a class="publisher-link" href="https://floydslabs.com"><span class="publisher-dot" aria-hidden="true"></span>Floyd's Labs</a>
+    </div>
+  </aside>
+
+  <main id="main" class="main">
+    <div class="masthead">
+      <img class="masthead-logo" src="/assets/brand/working-copy-256.aff5e3278e.png" alt="The Working Copy circular logo" width="72" height="72">
+      <div class="masthead-copy">
+        <p class="masthead-name">The Working Copy</p>
+        <p class="masthead-tagline">Ideas you can run.</p>
+        <p class="masthead-publisher">A developer publication from Legacy AI.</p>
+      </div>
+    </div>
+    <p class="publication-intro">Practical notes from building agents, tools, and useful software. Each article connects an idea to code you can run—with source links, clear setup steps, and enough explanation to make it your own.</p>
+
+    <header class="article-head">
+      <h1>GitHub&#x27;s new PR overview stops optional checks from crying wolf</h1>
+      <p class="article-lede">GitHub&#x27;s public-preview pull request Overview page got a round of fixes, and the headline is honesty: failed optional checks no longer make mergeable PRs look blocked. Interfaces that cry wolf get ignored, so this matters. Today you&#x27;ll run a small scan to find the places your own workflows interrogate pull requests.</p>
+      <div class="meta-line">
+        <span>November 20, 2026</span>
+        <span class="meta-sep" aria-hidden="true"></span>
+        <span>4 min read</span>
+        <span class="chip">Developer tools</span>
+      </div>
+      <p class="byline">By Legacy AI</p>
+    </header>
+
+    <section class="listen-panel" id="listen" aria-labelledby="listen-title" data-audio-panel>
+      <div class="listen-bar">
+        <button class="listen-toggle" data-audio-expand aria-expanded="false" aria-controls="audioExtra">
+          <span class="listen-icon" aria-hidden="true"><svg class="icon"><use href="#i-headphones"/></svg></span>
+          <span class="listen-bar-copy">
+            <strong id="listen-title">Listen to this article</strong>
+            <span class="mono" data-audio-clock>7:48</span>
+          </span>
+          <svg class="icon listen-chevron" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+        </button>
+        <button class="play play-compact" data-audio-toggle aria-label="Play the audio edition">
+          <svg class="icon icon-play" aria-hidden="true"><use href="#i-play"/></svg>
+          <svg class="icon icon-pause" aria-hidden="true"><use href="#i-pause"/></svg>
+        </button>
+      </div>
+      <div class="listen-seek" role="slider" tabindex="0" aria-label="Seek the audio edition" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-audio-seek>
+        <span class="track"><span class="track-fill" data-audio-fill></span></span>
+      </div>
+      <div class="listen-extra" id="audioExtra">
+        <div class="listen-extra-inner">
+          <button class="listen-control" data-audio-back aria-label="Rewind 10 seconds"><span class="mono">-10</span></button>
+          <button class="listen-control" data-audio-stop aria-label="Stop audio">Stop</button>
+          <button class="listen-control" data-audio-forward aria-label="Forward 10 seconds"><span class="mono">+10</span></button>
+          <a class="listen-control" href="/assets/audio/2026-11-20.a564487a23.mp3" download>Download</a>
+        </div>
+      </div>
+      <audio id="articleAudio" src="/assets/audio/2026-11-20.a564487a23.mp3" preload="metadata"></audio>
+    </section>
+
+    <div class="article-body">
+      <section id="story">
+<h2>What actually changed</h2>
+<p>The Overview page has been in public preview since November 5, 2026, and this update answers the loudest feedback. The big one is merge status: failed optional checks used to make a mergeable pull request appear blocked, and missing merge requirements now show what needs attention. A readiness summary tells reviewers and visitors what to do, including when the correct answer is nothing, which is a refreshing break from a status page radiating vague disapproval.</p>
+<p>The rest is polish with real payoff. Checks and approvals expand when clicked instead of pinning a preview; resolved review threads collapse so finished arguments stop haunting the scroll; force-push activity links to both the old and new commits, so reviewers can compare instead of trusting your promise that it was just a rebase. Commit activity now carries timestamps. You can join the preview with the Try the Overview page button in the header, and the same menu returns you to the classic view when you get nostalgic.</p>
+<h2>Find the automation that stares at your PRs</h2>
+<p>The Overview page reports merge readiness; a local scan answers a different question about automation. Use the narrow, read-only scanner supplied with this edition as a starting point, not as a merge-rules audit. Run it on your own repository: python3 find-pr-checks.py /path/to/your/repo. The script walks your workflow files and reports lines that query a pull request or a run through the GitHub CLI, like a step calling gh pr view.</p>
+<p>In a local one-workflow fixture, the output looked like this: the review workflow at line four contained a gh pr view call, with one candidate line total. Your output will differ, since filenames, line numbers, and counts depend on your repository. Be clear about what this is: it does not enumerate your checks, your required statuses, or your merge rules, and a match proves nothing about gating behavior or preview access. It is a list of places to read, not an audit, and it executes nothing from your repository. Think of it as a flashlight, not a verdict.</p>
+<h2>Read the matches, then decide separately</h2>
+<p>For each matching line, open the step around it and read what it actually does with the pull request data. The required-versus-optional question is a separate manual review: it lives in your repository&#x27;s settings, not in this scan, so go look there before concluding anything gates a merge. One matching line is a reason to ask a question, not a reason to rewrite a workflow before lunch.</p>
+<p>Then flip on the preview, open your next pull request, and see whether the readiness summary matches what you found by hand. GitHub explicitly calls this preview a starting point and asks what still sends you back to the classic overview. If you have read your automation and your settings, you will have an answer worth sharing in the feedback discussion, which beats the usual feedback of quietly grumbling and closing the tab.</p>
+      </section>
+
+      <section id="why">
+        <h2>Why it matters</h2>
+        <ul class="checklist">
+          <li>Failed optional checks no longer make mergeable PRs look blocked, so the page can distinguish a failed check from a missing merge requirement.</li>
+          <li>Force-push activity now links to both the old and new commits, meaning reviewers can verify your rebase instead of performing faith.</li>
+          <li>The preview is opt-in and reversible from the header menu, so auditing your PR-touching automation costs nothing but the coffee you were going to drink anyway.</li>
+        </ul>
+      </section>
+
+      <section class="run-this" id="run" aria-labelledby="run-title">
+        <div class="run-head">
+          <img class="patch" src="/assets/brand/patch-320.7f34876db4.png" srcset="/assets/brand/patch-320.7f34876db4.png 320w, /assets/brand/patch-640.ee0c24400f.png 640w" sizes="120px" alt="Patch, the Working Copy badger, holding a code card" width="120" height="120">
+          <div>
+            <h2 id="run-title">Run this</h2>
+            <p>Scan the workflow files in your own repository for lines that check a PR or a run with the GitHub CLI. Inspect the matching step before deciding whether to change it.</p>
+          </div>
+        </div>
+        <div class="run-scope"><p class="section-note">The source for this edition is the GitHub changelog post titled Improvements on the pull request overview in public preview. It is an announcement, not a repository address. Use its project link if it names one, or run this check on your own checkout.</p></div><div class="run-scope"><h3>Or run it on your own repository</h3><pre class="output"><code>python3 find-pr-checks.py /path/to/your/repo</code></pre></div>
+        <div class="run-grid">
+          <div class="run-step run-code">
+            <h3>Copy snippet</h3>
+            <pre><code id="run-snippet">#!/usr/bin/env python3
+&quot;&quot;&quot;List workflow lines that may be polling GitHub. Local, read-only; no CLI login.&quot;&quot;&quot;
+import argparse
+import pathlib
+import re
+
+CHECK = re.compile(r&#x27;\bgh\s+(?:pr\s+(?:view|checks)|run\s+(?:view|watch))\b&#x27;)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(&#x27;repository&#x27;, type=pathlib.Path)
+    root = parser.parse_args().repository.resolve(strict=True)
+    workflows = root / &#x27;.github&#x27; / &#x27;workflows&#x27;
+    hits = 0
+    for path in sorted(workflows.glob(&#x27;*&#x27;)):
+        if (path.suffix.lower() not in (&#x27;.yml&#x27;, &#x27;.yaml&#x27;) or not path.is_file() or
+                not path.resolve().is_relative_to(root) or path.stat().st_size &gt; 1_000_000):
+            continue
+        for number, line in enumerate(path.read_text(errors=&#x27;replace&#x27;).splitlines(), 1):
+            if not line.lstrip().startswith(&#x27;#&#x27;) and (match := CHECK.search(line)):
+                print(f&#x27;{path.relative_to(root)}:{number}: {match.group()}&#x27;)
+                hits += 1
+    print(f&#x27;candidate lines: {hits}&#x27;)
+
+
+if __name__ == &#x27;__main__&#x27;:
+    main()
+</code></pre>
+            <button class="btn-orange" data-copy-target="run-snippet">
+              <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
+              <span>Copy snippet</span>
+            </button>
+          </div>
+          <div class="run-step">
+            <h3>Open full example</h3>
+            <p>The complete script, with the checks described above and a short explanation.</p>
+            <a class="run-link" href="/editions/2026-11-20/run/find-pr-checks.py">find-pr-checks.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+            <p class="mono-note">Python 3.15.2 · no dependencies</p>
+          </div>
+          <div class="run-step">
+            <h3>View source</h3>
+            <p>The upstream item this edition is built on.</p>
+            <a class="run-link" href="https://github.blog/changelog/2026-11-19-improvements-on-the-pull-request-overview-in-public-preview">Source<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a>
+            <a class="run-link" href="/editions/2026-11-20/run/find-pr-checks.py">View find-pr-checks.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+          </div>
+          <div class="run-step run-result">
+            <h3>Check your result</h3>
+            <pre class="output">.github/workflows/review.yml:4: gh pr view
+candidate lines: 1</pre>
+            <p class="mono-note">Tested 2026-11-19 · Python 3.15.2 · local workflow fixture</p>
+            <p class="provenance">Example output: Output from a local one-workflow fixture; filenames, line numbers and counts will differ in your repository.</p>
+            <p class="limit">A match is a place to read, not proof of a polling loop, CLI support or preview access. This is not a security audit. No commands from the repository are executed.</p>
+            <p class="limit">This is a scope check, not a security audit.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="agent">
+        <h2>Hand it to your agent</h2>
+        <p>This prompt asks an agent to walk your repository&#x27;s workflow files and flag matching workflow lines that query a pull request or a run through the GitHub CLI. It reads files only and stops before suggesting edits, because a match is a question, not a verdict. Point it at your repo path and read what comes back.</p>
+        <div class="agent-prompt">
+          <h3>Agent prompt</h3>
+          <p>Paste this into the coding agent you already use. It is written to inspect before editing and to stop at the approval boundary.</p>
+          <pre><code id="agent-prompt">You are auditing my setup for The Working Copy edition &quot;GitHub&#x27;s new PR overview stops optional checks from crying wolf&quot;. Work read-only until I approve changes.
+
+1. Identify my operating system, editor or IDE and version, installed agent extensions, and the model provider route my agent uses.
+2. Run the check in ./find-pr-checks.py, or inline the same logic. Do not install anything.
+3. Scope: Use a local checkout of my repository. Do not clone or run the article&#x27;s topic repository unless I explicitly ask.
+4. Report the exact output, then explain which layer each finding belongs to: editor, harness, provider, edge, or toolchain.
+5. Compare the result with this source: Improvements on the pull request overview in public preview (https://github.blog/changelog/2026-11-19-improvements-on-the-pull-request-overview-in-public-preview).
+6. Do not print API keys, tokens, or credential-bearing URLs. Report hosts only.
+7. If something is misconfigured, propose the smallest change. List exact files and commands, and wait for my approval before editing anything.
+8. Finish with a one-page report: current state, risk, recommended change, verification step, and what you could not verify.</code></pre>
+          <button class="btn-orange" data-copy-target="agent-prompt">
+            <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
+            <span>Copy agent prompt</span>
+          </button>
+        </div>
+      </section>
+
+      <section id="watch">
+        <h2>Also worth reading</h2>
+        <ul class="watch-list">
+          <li><strong class="watch-title">The original Overview preview announcement</strong><span class="watch-detail">The November 5, 2026 public preview introduced the page these improvements build on; knowing the baseline makes the fixes legible.</span></li>
+          <li><strong class="watch-title">The overview preview feedback discussion</strong><span class="watch-detail">GitHub&#x27;s named venue for reporting issues and answering what still sends you back to the classic overview.</span></li>
+          <li><strong class="watch-title">Your repository&#x27;s settings for required checks</strong><span class="watch-detail">The scan finds lines to read; the settings are where required-versus-optional is actually decided.</span></li>
+        </ul>
+      </section>
+
+      <section id="sources">
+        <h2>Sources</h2>
+        <ul class="source-list source-list-inline">
+          <li><a href="https://github.blog/changelog/2026-11-19-improvements-on-the-pull-request-overview-in-public-preview">Improvements on the pull request overview in public preview<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
+          <li><a href="/editions/2026-11-20/run/find-pr-checks.py">The runnable example used in this article<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a></li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="share-copy">
+      <div>
+        <p class="share-copy-title">Share this article</p>
+        <p class="section-note">Send the link to someone who should read it, or copy it into a post.</p>
+      </div>
+      <button class="btn-outline" id="copyLink">
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
+        <span>Copy link</span>
+      </button>
+    </section>
+
+    <footer class="edition-foot">
+      <div class="publisher">
+        <img src="/assets/brand/legacy-ai-256.001d2635f0.png" alt="Legacy AI" width="40" height="40">
+        <div>
+          <p class="publisher-name">The Working Copy</p>
+          <p>Ideas you can run. A developer publication from Legacy AI.</p>
+        </div>
+      </div>
+      <p class="foot-links"><a href="/archive/">Archive</a><a href="/editions/2026-11-20/audio/2026-11-20-narration.md">Audio transcript</a><a href="https://legacyai.space">Legacy AI</a><a href="https://floydslabs.com">Floyd's Labs</a></p>
+      <p>Edition 004, 2026-11-20. The written article is authoritative.</p>
+      <p>Audio edition narrated by Uncle Burt. Built locally; no external CDN.</p>
+    </footer>
+  </main>
+
+  <aside class="aside" aria-label="Run this and about">
+    <section class="listen-card glass">
+      <div class="listen-head"><h2>Run this</h2><span class="chip">Patch</span></div>
+      <div class="aside-run">
+        <img class="aside-patch" src="/assets/brand/patch-320.7f34876db4.png" alt="Patch, the Working Copy badger" width="72" height="72">
+        <p>One matching line is a place to ask a question, not a reason to rewrite a workflow.</p>
+      </div>
+      <button class="btn-orange" data-copy-target="run-snippet">
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
+        <span>Copy snippet</span>
+      </button>
+      <button class="btn-secondary" data-copy-target="agent-prompt">
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
+        <span>Copy agent prompt</span>
+      </button>
+      <a class="btn-secondary" href="/editions/2026-11-20/run/find-pr-checks.py">Open the full example<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+    </section>
+
+    <section class="about-card">
+      <h2>About The Working Copy</h2>
+      <p>Practical notes from building agents, tools, and useful software. Each article connects an idea to code you can run.</p>
+      <p class="mono-note">Published by Legacy AI. Also on Floyd's Labs.</p>
+    </section>
+
+    <section class="evidence-card">
+      <h2>Audio edition</h2>
+      <p class="section-note">Narrated by Uncle Burt. The written article remains authoritative.</p>
+      <a class="btn-secondary" href="#listen" data-open-audio>Listen to this article</a>
+    </section>
+  </aside>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="/assets/app.088fed186b.js"></script>
+</body>
+</html>

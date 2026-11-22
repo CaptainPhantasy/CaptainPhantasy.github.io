@@ -4,6 +4,14 @@
   "publisher": "Legacy AI",
   "editions": [
     {
+      "slug": "2026-11-22",
+      "date": "2026-11-22",
+      "title": "RHEL runners go GA, so your CI can match what you ship",
+      "excerpt": "GitHub's larger runners now offer generally available RHEL 9 and 10 images, so testing on the OS you deploy to no longer means keeping a self-hosted box alive.",
+      "duration": "8:16",
+      "url": "/editions/2026-11-22/"
+    },
+    {
       "slug": "2026-11-21",
       "date": "2026-11-21",
       "title": "Azure DevOps migrations now keep working while you keep working",

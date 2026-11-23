@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F5EDE0">
+<title>GitHub Actions will happily run YAML your parser rejects — The Working Copy</title>
+<meta name="description" content="GitHub&#x27;s workflow parser is more forgiving than any YAML tool you have locally, which means broken workflow files can pass every check and still behave strangely.">
+<meta property="og:title" content="GitHub Actions will happily run YAML your parser rejects — The Working Copy">
+<meta property="og:description" content="GitHub&#x27;s workflow parser is more forgiving than any YAML tool you have locally, which means broken workflow files can pass every check and still behave strangely.">
+<meta property="og:type" content="article">
+
+
+<link rel="icon" href="/assets/brand/working-copy-64.d32eb6afa1.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/icons/icon-192.efb52459f7.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/assets/icons/icon-512.c35d2f70d8.png">
+<link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon-180.6fdb141b90.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="The Working Copy">
+<link rel="stylesheet" href="/assets/styles.1b5d6aa369.css">
+<link rel="canonical" href="https://theworkingcopy.floydslabs.com/editions/2026-11-23/">
+<meta property="og:url" content="https://theworkingcopy.floydslabs.com/editions/2026-11-23/">
+<meta property="og:image" content="https://theworkingcopy.floydslabs.com/assets/icons/icon-512.c35d2f70d8.png">
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false"><symbol id="i-arrow-up-right" viewBox="0 0 24 24"><path d="M7 7h10v10" />
+  <path d="M7 17 17 7" /></symbol>
+<symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4" />
+  <path d="M16 2v4" />
+  <rect width="18" height="18" x="3" y="4" rx="2" />
+  <path d="M3 10h18" /></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" /></symbol>
+<symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></symbol>
+<symbol id="i-chevron-up" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6" /></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><path d="M12 6v6l4 2" />
+  <circle cx="12" cy="12" r="10" /></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 15V3" />
+  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+  <path d="m7 10 5 5 5-5" /></symbol>
+<symbol id="i-external-link" viewBox="0 0 24 24"><path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></symbol>
+<symbol id="i-headphones" viewBox="0 0 24 24"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" /></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" /></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><rect x="14" y="3" width="5" height="18" rx="1" />
+  <rect x="5" y="3" width="5" height="18" rx="1" /></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z" /></symbol>
+<symbol id="i-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2" />
+  <rect width="20" height="8" x="2" y="14" rx="2" ry="2" />
+  <line x1="6" x2="6.01" y1="6" y2="6" />
+  <line x1="6" x2="6.01" y1="18" y2="18" /></symbol>
+<symbol id="i-share-2" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3" />
+  <circle cx="6" cy="12" r="3" />
+  <circle cx="18" cy="19" r="3" />
+  <line x1="8.59" x2="15.42" y1="13.51" y2="17.49" />
+  <line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></symbol>
+<symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+  <path d="m9 12 2 2 4-4" /></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18" />
+  <path d="m6 6 12 12" /></symbol></svg>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="topbar" id="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#main" aria-label="The Working Copy">
+      <img class="brand-logo" src="/assets/brand/working-copy-256.aff5e3278e.png" alt="" width="36" height="36">
+      <span class="brand-name">The Working Copy</span>
+    </a>
+    <div class="top-actions">
+      <a class="top-link" href="/archive/">Archive</a>
+      <a class="top-link" href="https://legacyai.space">Legacy AI</a>
+      <a class="top-link" href="https://floydslabs.com">Floyd's Labs</a>
+      <button class="icon-btn" data-open-audio aria-label="Listen to this article">
+        <svg class="icon" aria-hidden="true"><use href="#i-headphones"/></svg>
+      </button>
+      <button class="icon-btn" id="shareTop" aria-label="Share this article">
+        <svg class="icon" aria-hidden="true"><use href="#i-share-2"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <aside class="rail" aria-label="Article navigation">
+    <div class="rail-block">
+      <p class="rail-date">November 23, 2026<span>Edition 007</span></p>
+      <nav class="rail-nav" aria-label="In this article">
+        <a class="rail-link" href="#story">The story</a>
+        <a class="rail-link" href="#why">Why it matters</a>
+        
+        <a class="rail-link" href="#agent">Agent prompt</a>
+        <a class="rail-link" href="#watch">Also worth reading</a>
+        <a class="rail-link" href="#sources">Sources</a>
+      </nav>
+    </div>
+    <div class="rail-block">
+      <p class="rail-label">Published by</p>
+      <a class="publisher-link" href="https://legacyai.space"><img src="/assets/brand/legacy-ai-256.001d2635f0.png" alt="" width="32" height="32">Legacy AI</a>
+      <a class="publisher-link" href="https://floydslabs.com"><span class="publisher-dot" aria-hidden="true"></span>Floyd's Labs</a>
+    </div>
+  </aside>
+
+  <main id="main" class="main">
+    <div class="masthead">
+      <img class="masthead-logo" src="/assets/brand/working-copy-256.aff5e3278e.png" alt="The Working Copy circular logo" width="72" height="72">
+      <div class="masthead-copy">
+        <p class="masthead-name">The Working Copy</p>
+        <p class="masthead-tagline">Ideas you can run.</p>
+        <p class="masthead-publisher">A developer publication from Legacy AI.</p>
+      </div>
+    </div>
+    <p class="publication-intro">Practical notes from building agents, tools, and useful software. Each article connects an idea to code you can run—with source links, clear setup steps, and enough explanation to make it your own.</p>
+
+    <header class="article-head">
+      <h1>GitHub Actions will happily run YAML your parser rejects</h1>
+      <p class="article-lede">There is a small, documented gap between what GitHub Actions accepts in a workflow file and what counts as valid YAML anywhere else. A workflow with malformed structure can be swallowed without complaint, and you only find out when a job silently does the wrong thing in CI.</p>
+      <div class="meta-line">
+        <span>November 23, 2026</span>
+        <span class="meta-sep" aria-hidden="true"></span>
+        <span>4 min read</span>
+        <span class="chip">Developer tools</span>
+      </div>
+      <p class="byline">By Legacy AI</p>
+    </header>
+
+    <section class="listen-panel" id="listen" aria-labelledby="listen-title" data-audio-panel>
+      <div class="listen-bar">
+        <button class="listen-toggle" data-audio-expand aria-expanded="false" aria-controls="audioExtra">
+          <span class="listen-icon" aria-hidden="true"><svg class="icon"><use href="#i-headphones"/></svg></span>
+          <span class="listen-bar-copy">
+            <strong id="listen-title">Listen to this article</strong>
+            <span class="mono" data-audio-clock>8:32</span>
+          </span>
+          <svg class="icon listen-chevron" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+        </button>
+        <button class="play play-compact" data-audio-toggle aria-label="Play the audio edition">
+          <svg class="icon icon-play" aria-hidden="true"><use href="#i-play"/></svg>
+          <svg class="icon icon-pause" aria-hidden="true"><use href="#i-pause"/></svg>
+        </button>
+      </div>
+      <div class="listen-seek" role="slider" tabindex="0" aria-label="Seek the audio edition" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-audio-seek>
+        <span class="track"><span class="track-fill" data-audio-fill></span></span>
+      </div>
+      <div class="listen-extra" id="audioExtra">
+        <div class="listen-extra-inner">
+          <button class="listen-control" data-audio-back aria-label="Rewind 10 seconds"><span class="mono">-10</span></button>
+          <button class="listen-control" data-audio-stop aria-label="Stop audio">Stop</button>
+          <button class="listen-control" data-audio-forward aria-label="Forward 10 seconds"><span class="mono">+10</span></button>
+          <a class="listen-control" href="/assets/audio/2026-11-23.2a24e19455.mp3" download>Download</a>
+        </div>
+      </div>
+      <audio id="articleAudio" src="/assets/audio/2026-11-23.2a24e19455.mp3" preload="metadata"></audio>
+    </section>
+
+    <div class="article-body">
+      <section id="story">
+<h2>What&#x27;s actually going on</h2>
+<p>YAML, the indentation-and-colons format your workflow files are written in, has a specification. Most parsers enforce it. GitHub Actions, it turns out, accepts workflow files that violate it. That&#x27;s not a scandal on the scale of, say, a memory-corruption bug — it&#x27;s more like a restaurant that serves you food the health inspector wouldn&#x27;t. Nobody dies, but you shouldn&#x27;t assume the kitchen is checking anything.</p>
+<p>The practical consequence is the illusion of validation. Your workflow runs, green checkmark and all, so you assume the file is well-formed. But a structurally invalid file that GitHub tolerates can misbehave in ways that look like logic bugs: a condition that never fires, a step that gets skipped for reasons the UI won&#x27;t explain. You&#x27;ll debug your logic long before you think to question the file itself.</p>
+<h2>The habit: check with something other than GitHub</h2>
+<p>The fix is to stop treating GitHub&#x27;s acceptance as a correctness signal. If GitHub&#x27;s parser is the forgiving one, your check has to come from a stricter one. The general move: run your workflow files through a strict YAML parser or a dedicated workflow linter of your choosing, locally, before you push. Any tool whose entire job is to say &quot;no&quot; to malformed YAML will do — the point is that it is not the same program that runs your pipelines.</p>
+<p>Here&#x27;s the worked example. Say you edited a deploy workflow and GitHub accepted it, but the deployment job started skipping itself. Before you spiral into debugging your logic, take that workflow file and parse it with a strict, standards-following YAML library — the kind shipped with your language&#x27;s package manager. If the file contains something like a duplicated key where the second quietly overwrites the first, or indentation the specification forbids, a strict parser will complain where GitHub shrugged. You get a line number instead of a mystery. Fix the line, re-parse until it&#x27;s clean, then push. The loop is faster than one wasted CI run.</p>
+<p>If you want this to be a team habit rather than a personal one, make the strict parse a first step in CI itself, so a pull request with malformed workflows fails loudly at the lint step instead of failing mysteriously three jobs later. Either way, the principle holds: the thing that runs your code should not also be the only thing that checks its own configuration.</p>
+      </section>
+
+      <section id="why">
+        <h2>Why it matters</h2>
+        <ul class="checklist">
+          <li>A workflow file GitHub accepts can still be structurally invalid YAML, so a green run is not proof your config is sound.</li>
+          <li>Strange CI behavior — skipped jobs, conditions that never fire — can come from file structure, not your logic.</li>
+          <li>Parsing your workflows with a strict local tool catches these before you burn a CI run or a teammate&#x27;s afternoon.</li>
+        </ul>
+      </section>
+
+
+
+      <section id="agent">
+        <h2>Hand it to your agent</h2>
+        <p>Here&#x27;s a prompt you can hand to your coding agent. It will read your workflow files and look for the kind of structural sloppiness GitHub tolerates but strict parsers don&#x27;t — things like duplicated keys and off-spec indentation. It reports what it finds and stops before changing anything, so you decide what to fix.</p>
+        <div class="agent-prompt">
+          <h3>Agent prompt</h3>
+          <p>Paste this into the coding agent you already use. It is written to inspect before editing and to stop at the approval boundary.</p>
+          <pre><code id="agent-prompt">You are auditing my setup for The Working Copy edition &quot;GitHub Actions will happily run YAML your parser rejects&quot;. Work read-only until I approve changes. Read the source at https://yossarian.net/til/post/github-actions-accepts-invalid-yaml/, list every factual claim in the article, and check each one against that source. Report any claim the source does not support and any concrete step the article asks me to take. Do not print API keys, tokens, or credential-bearing URLs. Propose the smallest correction and wait for my approval before editing.</code></pre>
+          <button class="btn-orange" data-copy-target="agent-prompt">
+            <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
+            <span>Copy agent prompt</span>
+          </button>
+        </div>
+      </section>
+
+      <section id="watch">
+        <h2>Also worth reading</h2>
+        <ul class="watch-list">
+          <li><strong class="watch-title">The original note on GitHub Actions accepting invalid YAML</strong><span class="watch-detail">The short write-up that started this — worth two minutes and a moment of quiet horror.</span></li>
+          <li><strong class="watch-title">Your own workflows directory</strong><span class="watch-detail">Pick your most-edited workflow file and parse it with a strict YAML library this week. If it passes, you get to feel smug; if it doesn&#x27;t, you found a bug before CI did.</span></li>
+        </ul>
+      </section>
+
+      <section id="sources">
+        <h2>Sources</h2>
+        <ul class="source-list source-list-inline">
+          <li><a href="https://yossarian.net/til/post/github-actions-accepts-invalid-yaml/">GitHub Actions accepts invalid YAML<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="share-copy">
+      <div>
+        <p class="share-copy-title">Share this article</p>
+        <p class="section-note">Send the link to someone who should read it, or copy it into a post.</p>
+      </div>
+      <button class="btn-outline" id="copyLink">
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
+        <span>Copy link</span>
+      </button>
+    </section>
+
+    <footer class="edition-foot">
+      <div class="publisher">
+        <img src="/assets/brand/legacy-ai-256.001d2635f0.png" alt="Legacy AI" width="40" height="40">
+        <div>
+          <p class="publisher-name">The Working Copy</p>
+          <p>Ideas you can run. A developer publication from Legacy AI.</p>
+        </div>
+      </div>
+      <p class="foot-links"><a href="/archive/">Archive</a><a href="/editions/2026-11-23/audio/2026-11-23-narration.md">Audio transcript</a><a href="https://legacyai.space">Legacy AI</a><a href="https://floydslabs.com">Floyd's Labs</a></p>
+      <p>Edition 007, 2026-11-23. The written article is authoritative.</p>
+      <p>Audio edition narrated by Uncle Burt. Built locally; no external CDN.</p>
+    </footer>
+  </main>
+
+  <aside class="aside" aria-label="Agent prompt and about">
+    <section class="listen-card glass">
+      <div class="listen-head"><h2>Agent prompt</h2><span class="chip">Patch</span></div>
+      <div class="aside-run">
+        <img class="aside-patch" src="/assets/brand/patch-320.7f34876db4.png" alt="Patch, the Working Copy badger" width="72" height="72">
+        <p>The source and the article&#x27;s worked example are above.</p>
+      </div>
+      <button class="btn-secondary" data-copy-target="agent-prompt">
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
+        <span>Copy agent prompt</span>
+      </button>
+      <a class="btn-secondary" href="https://yossarian.net/til/post/github-actions-accepts-invalid-yaml/">Open the source<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+    </section>
+
+    <section class="about-card">
+      <h2>About The Working Copy</h2>
+      <p>Practical notes from building agents, tools, and useful software. Each article connects an idea to code you can run.</p>
+      <p class="mono-note">Published by Legacy AI. Also on Floyd's Labs.</p>
+    </section>
+
+    <section class="evidence-card">
+      <h2>Audio edition</h2>
+      <p class="section-note">Narrated by Uncle Burt. The written article remains authoritative.</p>
+      <a class="btn-secondary" href="#listen" data-open-audio>Listen to this article</a>
+    </section>
+  </aside>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="/assets/app.088fed186b.js"></script>
+</body>
+</html>

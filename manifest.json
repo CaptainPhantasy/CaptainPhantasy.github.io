@@ -4,6 +4,14 @@
   "publisher": "Legacy AI",
   "editions": [
     {
+      "slug": "2026-11-23",
+      "date": "2026-11-23",
+      "title": "GitHub Actions will happily run YAML your parser rejects",
+      "excerpt": "GitHub's workflow parser is more forgiving than any YAML tool you have locally, which means broken workflow files can pass every check and still behave strangely.",
+      "duration": "8:32",
+      "url": "/editions/2026-11-23/"
+    },
+    {
       "slug": "2026-11-22",
       "date": "2026-11-22",
       "title": "RHEL runners go GA, so your CI can match what you ship",

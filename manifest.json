@@ -6,9 +6,9 @@
     {
       "slug": "2026-11-23",
       "date": "2026-11-23",
-      "title": "GitHub Actions will happily run YAML your parser rejects",
-      "excerpt": "GitHub's workflow parser is more forgiving than any YAML tool you have locally, which means broken workflow files can pass every check and still behave strangely.",
-      "duration": "8:32",
+      "title": "You do not train the GGUF, you train the model behind it",
+      "excerpt": "Both published walkthroughs end at a GGUF file. The teaching is everything before that: a small base model, a clean dataset, a merged adapter and a chat template that matches.",
+      "duration": "7:34",
       "url": "/editions/2026-11-23/"
     },
     {

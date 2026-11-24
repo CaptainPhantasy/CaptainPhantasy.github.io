@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F5EDE0">
-<title>Ruby&#x27;s string bug is critical, so check your version before lunch — The Working Copy</title>
-<meta name="description" content="A heap buffer overflow in default Rails and Sinatra apps hit this week, and the fix starts with knowing which Ruby you actually run.">
-<meta property="og:title" content="Ruby&#x27;s string bug is critical, so check your version before lunch — The Working Copy">
-<meta property="og:description" content="A heap buffer overflow in default Rails and Sinatra apps hit this week, and the fix starts with knowing which Ruby you actually run.">
+<title>Your laptop can run a coding model now, and the fallback is free — The Working Copy</title>
+<meta name="description" content="Open-weight coding models now fit on 16 to 32 GB of consumer memory. Here is how to find the one your machine can actually hold, and set it up offline.">
+<meta property="og:title" content="Your laptop can run a coding model now, and the fallback is free — The Working Copy">
+<meta property="og:description" content="Open-weight coding models now fit on 16 to 32 GB of consumer memory. Here is how to find the one your machine can actually hold, and set it up offline.">
 <meta property="og:type" content="article">
 
 
@@ -120,13 +120,13 @@
     <p class="publication-intro">Practical notes from building agents, tools, and useful software. Each article connects an idea to code you can run—with source links, clear setup steps, and enough explanation to make it your own.</p>
 
     <header class="article-head">
-      <h1>Ruby&#x27;s string bug is critical, so check your version before lunch</h1>
-      <p class="article-lede">The Ruby team disclosed ruby2shell, a critical heap buffer overflow in how Ruby changes the case of strings, on November 19. Rails and classic-style Sinatra apps hit the bug in their default configuration, before any login screen, and proofs of concept exist that achieve remote code execution. Before you panic-upgrade, find out which Ruby your app actually resolves to.</p>
+      <h1>Your laptop can run a coding model now, and the fallback is free</h1>
+      <p class="article-lede">The local-model conversation has a hardware problem. Most guides assume a rack of GPUs or a 128 GB workstation. The models got smaller this year. A useful coding fallback now fits on a gaming laptop, and the only question that matters is how much memory you can give it.</p>
       <div class="meta-line">
         <span>November 24, 2026</span>
         <span class="meta-sep" aria-hidden="true"></span>
         <span>4 min read</span>
-        <span class="chip">Ruby toolchain</span>
+        <span class="chip">Local AI</span>
       </div>
       <p class="byline">By Legacy AI</p>
     </header>
@@ -137,7 +137,7 @@
           <span class="listen-icon" aria-hidden="true"><svg class="icon"><use href="#i-headphones"/></svg></span>
           <span class="listen-bar-copy">
             <strong id="listen-title">Listen to this article</strong>
-            <span class="mono" data-audio-clock>8:14</span>
+            <span class="mono" data-audio-clock>7:40</span>
           </span>
           <svg class="icon listen-chevron" aria-hidden="true"><use href="#i-chevron-down"/></svg>
         </button>
@@ -154,31 +154,196 @@
           <button class="listen-control" data-audio-back aria-label="Rewind 10 seconds"><span class="mono">-10</span></button>
           <button class="listen-control" data-audio-stop aria-label="Stop audio">Stop</button>
           <button class="listen-control" data-audio-forward aria-label="Forward 10 seconds"><span class="mono">+10</span></button>
-          <a class="listen-control" href="/assets/audio/2026-11-24.562ac74834.mp3" download>Download</a>
+          <a class="listen-control" href="/assets/audio/2026-11-24.1c164a1f81.mp3" download>Download</a>
         </div>
       </div>
-      <audio id="articleAudio" src="/assets/audio/2026-11-24.562ac74834.mp3" preload="metadata"></audio>
+      <audio id="articleAudio" src="/assets/audio/2026-11-24.1c164a1f81.mp3" preload="metadata"></audio>
     </section>
 
     <div class="article-body">
       <section id="story">
-<h2>What broke, and in plain words</h2>
-<p>A heap buffer overflow means a program writes past the end of a chunk of memory it was given, corrupting whatever was sitting next to it. In this case the trigger is something as boring as changing a string&#x27;s case, so an attacker doesn&#x27;t need a login to reach it: Veria Labs found that Ruby on Rails and classic-style Sinatra applications hit the bug in their default configuration, before any authentication. The flaw is tracked as CVE-2026-132825, rated Critical by the Ruby team, with a related integer overflow in the same string case-conversion code fixed in the same releases.</p>
-<p>The fixed versions are Ruby 3.3.14, 3.4.13, and 4.0.10, so there is a patch available no matter which release line you&#x27;re on. The awkward part is that self-hosted products bundling Ruby, including GitLab, Mastodon, Discourse, OpenProject, Chatwoot and GitHub Enterprise Server, shipped an affected Ruby in their latest release at the time of disclosure, so if you run any of those, the upgrade path goes through them, not just your own Gemfile.</p>
-<h2>Check your versions before you touch anything</h2>
-<p>The mistake everyone makes during a security scare is upgrading the thing they think they run instead of the thing they actually run. Ruby versions live in several places: the version pinned by your repository&#x27;s toolchain files, the version your terminal resolves to right now, and the version your Rails and Bundler gems were installed against. They are not always the same, and the gap between them is exactly where memory bugs hide.</p>
-<p>Run the example in the Run this block below against your own repository. It prints the Ruby, Rails and Bundler versions your repository resolves, plus the local toolchain versions. The observable output is a short table: if the Ruby line shows 3.3.14, 3.4.13, 4.0.10 or later, you&#x27;re patched and can go back to your day. If it shows anything older, you have found your afternoon. Nothing is changed by the script; it only reports, so it&#x27;s safe to run anywhere.</p>
-<h2>Patch first, then lean on the safety net</h2>
-<p>Cloudflare&#x27;s web application firewall, a filter that sits in front of your app and blocks known attack patterns, now blocks ruby2shell for every customer including Free plans, with two new rules enabled by default and set to Block. That is a genuine safety net, and the WAF rule for the related PHP flaws updated earlier even caught part of this class of pattern before disclosure. But the source post is blunt about it: the WAF is a compensating control, not a replacement for patching, because exploits can reach the bug through paths a WAF cannot see.</p>
-<p>So the order of operations is: run the version check, upgrade Ruby to a fixed release, and treat any firewall protection as the seatbelt you wear while the airbag gets installed. Your next concrete step is to run the check in your repository, note the Ruby line, and if it&#x27;s stale, plan the upgrade before the proofs of concept become working exploit kits.</p>
+<h2>The models got small enough to matter</h2>
+<p>Three releases changed the size math this year. Prism ML&#x27;s Ternary Bonsai 2 compresses a 27-billion-parameter Qwen model into a ternary build: 5.95 GB for the PTQ1_0 file and 7.21 GB for PQ2_0, while keeping about 98% of the base model&#x27;s benchmark score. JetBrains&#x27; Mellum2.1 Thinking is a 12-billion-parameter mixture of experts with 2.5 billion active per token; its Q4_K_M build is 8.07 GB. Qwen3.8-27B is a dense 27-billion model with a 262K-token context, and a four-bit build lands around 17 GB.</p>
+<p>The wider field is just as usable. OpenAI&#x27;s gpt-oss-20b is a 21-billion mixture of experts that ships natively in MXFP4 at about 14 GB. Mistral&#x27;s Devstral Small 2 is a 24-billion dense agentic coder at 12.76 GB in IQ4_XS or 14.33 GB at Q4_K_M. Qwen3-Coder-30B-A3B is an 18 GB four-bit build with 3.3 billion active parameters. Gemma 4&#x27;s 26B-A4B mixture of experts is about 17 GB, and the 31B dense build is 18.32 GB. Most of these are Apache 2.0.</p>
+<p>None of them is a frontier model. That is the trade. You give up the top of the benchmark table and the largest context windows for a model that costs nothing per token, runs without a network, and keeps your code on the machine. For a fallback, that is usually the right trade.</p>
+<h2>The only number that matters is memory</h2>
+<p>Parameter count is not memory. What has to fit is the weight file, the KV cache that grows with context, and the runtime&#x27;s own overhead. The 31B Gemma looks comfortable on a 24 GB card at 18.32 GB, until you add the runtime and a 32K context: the KV cache alone is about 3.94 GB at 32K, which runs the total past the card. The same model that feels fine at 4K is unusable at 32K. Context is a budget, not a free setting.</p>
+<p>The hardware splits into two kinds. A discrete GPU has its own VRAM; the model must fit there, or layers spill into system memory and speed collapses. Apple silicon shares one pool between CPU and GPU, so a 32 GB Mac is a 32 GB budget with the operating system on the same bill. Either way, leave two or three gigabytes for the desktop, the editor, and the context you actually want.</p>
+<p>Quantization is the other dial. A four-bit file is roughly a quarter of the 16-bit size, and the quality loss is usually small; a ternary build goes further. Smaller is not always better: a two-bit build of a large model can lose more than a four-bit build of a smaller one. Pick the largest file that fits with a couple of gigabytes left over, then shorten the context before you shrink the model.</p>
+<h2>Set up the fallback, then test it like a tool</h2>
+<p>Start with a runtime, not a model. Ollama is the shortest path; llama.cpp gives you more control; LM Studio is the GUI. Pull one of the smaller builds first, either Bonsai 2 or Mellum2.1, and run a real task from your own work. Ask it to explain a function in your repository, write a test for a bug you already fixed, or review a diff. Do not judge it on a riddle.</p>
+<p>Measure what you got. Note the tokens per second, the time to the first token, and whether the fan or battery makes the experience unpleasant. Then wire it into your editor as a fallback provider and test the failure path: turn off the network, switch to the local model, and finish one small task. A fallback you have never used is not a fallback.</p>
+<p>Keep the cloud model as the primary and the local one as the seatbelt. Use the local model for private code, offline work, rate-limit days, and the tasks where a slightly weaker answer is fine. Do not pretend it is the same model. The value is that it is yours, it is free, and it still works when the API does not.</p>
       </section>
+
+
+<style>
+.fit{margin:28px 0 34px;padding:22px;border:var(--outline);background:var(--surface-solid);border-radius:14px}
+.fit .eyebrow{margin:0 0 6px;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--orange)}
+.fit h2{margin:0 0 8px;font-size:26px;line-height:1.1;letter-spacing:-.02em}
+.fit-intro{margin:0 0 16px;font-size:15px;line-height:1.55;color:var(--ink-2);max-width:66ch}
+.fit-controls{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:0 0 14px}
+.fit fieldset{border:0;margin:0;padding:0}
+.fit legend{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-bottom:7px}
+.fit-options{display:flex;flex-wrap:wrap;gap:7px}
+.fit-radio{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-size:13px;font-weight:600;cursor:pointer}
+.fit-radio input{accent-color:var(--orange);margin:0}
+.fit-radio:has(input:checked){border-color:var(--ink);background:var(--ink);color:#fff}
+.fit-summary{margin:0 0 14px;font-size:14px;line-height:1.5;color:var(--ink-2)}
+.fit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.fit-card{display:grid;grid-template-columns:1fr auto;gap:4px 10px;text-align:left;padding:12px 14px;border:1px solid var(--line);border-radius:11px;background:#fff;cursor:pointer;font:inherit}
+.fit-card:hover{border-color:var(--ink)}
+.fit-name{font-size:14px;font-weight:750;line-height:1.3}
+.fit-meta{grid-column:1;font-size:12.5px;color:var(--ink-3)}
+.fit-badge{grid-row:1/3;grid-column:2;align-self:center;padding:4px 8px;border-radius:999px;font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;background:var(--surface);color:var(--ink-3);white-space:nowrap}
+.fit-card.is-good .fit-badge{background:#DCF0E4;color:#1E6B43}
+.fit-card.is-tight .fit-badge{background:#FBEBD8;color:#8A4B12}
+.fit-card.is-no{opacity:.55}
+.fit-card.is-no .fit-badge{background:#F3E1DE;color:#8A2F22}
+.fit-card.is-selected{outline:2px solid var(--ink);outline-offset:2px}
+.fit-detail{margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:11px;background:#fff}
+.fit-detail h3{margin:0 0 4px;font-size:16px}
+.fit-detail p{margin:0 0 10px;font-size:14px;line-height:1.5;color:var(--ink-2)}
+.fit-command{display:flex;gap:8px;align-items:flex-start}
+.fit-command pre{flex:1;margin:0;padding:10px 12px;overflow-x:auto;background:var(--ink);color:#F7F3EA;border-radius:8px;font-size:12.5px}
+.fit-command button{flex:none;padding:9px 12px;border:1px solid var(--ink);border-radius:8px;background:var(--ink);color:#fff;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+.fit-note{margin:12px 0 0;font-size:12px;line-height:1.5;color:var(--ink-3)}
+@media (max-width:700px){.fit-controls{grid-template-columns:1fr}.fit-grid{grid-template-columns:1fr}}
+</style>
+<section class="fit" id="fit" aria-labelledby="fit-title"><p class="eyebrow">Interactive</p><h2 id="fit-title">Will it fit on your machine?</h2><p class="fit-intro">Pick your usable memory and the context you want. The rule adds about 2 GB for the runtime and a reserve for the KV cache. A card can look big enough for a model and still have no room left for a long conversation.</p><div class="fit-controls"><fieldset><legend>Usable memory</legend><div class="fit-options"><label class="fit-radio"><input type="radio" name="fit-memory" value="8"><span>8 GB</span></label><label class="fit-radio"><input type="radio" name="fit-memory" value="12"><span>12 GB</span></label><label class="fit-radio"><input type="radio" name="fit-memory" value="16" checked><span>16 GB</span></label><label class="fit-radio"><input type="radio" name="fit-memory" value="24"><span>24 GB</span></label><label class="fit-radio"><input type="radio" name="fit-memory" value="32"><span>32 GB</span></label><label class="fit-radio"><input type="radio" name="fit-memory" value="48"><span>48 GB</span></label><label class="fit-radio"><input type="radio" name="fit-memory" value="64"><span>64 GB</span></label></div></fieldset><fieldset><legend>Context you want</legend><div class="fit-options"><label class="fit-radio"><input type="radio" name="fit-context" value="short" data-reserve="0.5" data-label="Short (4K)"><span>Short (4K)</span></label><label class="fit-radio"><input type="radio" name="fit-context" value="medium" data-reserve="2.0" data-label="Medium (16K)" checked><span>Medium (16K)</span></label><label class="fit-radio"><input type="radio" name="fit-context" value="long" data-reserve="6.0" data-label="Long (32K+)"><span>Long (32K+)</span></label></div></fieldset></div><p class="fit-summary" data-fit-summary aria-live="polite">Choose memory and context.</p><div class="fit-grid" data-fit-grid><button type="button" class="fit-card" data-name="Ternary Bonsai 2 27B" data-weights="5.95" data-command="ollama run hf.co/prism-ml/Ternary-Bonsai-2-27B-gguf:PTQ1_0" data-note="Ternary weights; 262K context; about 98% of Qwen3.8-27B on the vendor&#x27;s suite."><span class="fit-name">Ternary Bonsai 2 27B</span><span class="fit-meta">5.95 GB · PTQ1_0</span><span class="fit-badge">—</span></button><button type="button" class="fit-card" data-name="Ternary Bonsai 2 27B" data-weights="7.21" data-command="ollama run hf.co/prism-ml/Ternary-Bonsai-2-27B-gguf:PQ2_0" data-note="The slightly larger Bonsai build; more headroom for quality, still small."><span class="fit-name">Ternary Bonsai 2 27B</span><span class="fit-meta">7.21 GB · PQ2_0</span><span class="fit-badge">—</span></button><button type="button" class="fit-card" data-name="Mellum2.1 Thinking" data-weights="8.07" data-command="ollama run hf.co/JetBrains/Mellum2.1-12B-A2.5B-Thinking-GGUF:Q4_K_M" data-note="12B MoE, 2.5B active; 131K context; built for coding agents."><span class="fit-name">Mellum2.1 Thinking</span><span class="fit-meta">8.07 GB · Q4_K_M</span><span class="fit-badge">—</span></button><button type="button" class="fit-card" data-name="Devstral Small 2 24B" data-weights="12.76" data-command="ollama run hf.co/bartowski/mistralai_Devstral-Small-2-24B-Instruct-2512-GGUF:IQ4_XS" data-note="24B dense agentic coder; 256K context; strongest at multi-file edits."><span class="fit-name">Devstral Small 2 24B</span><span class="fit-meta">12.76 GB · IQ4_XS</span><span class="fit-badge">—</span></button><button type="button" class="fit-card" data-name="gpt-oss-20b" data-weights="13.8" data-command="ollama run gpt-oss:20b" data-note="21B MoE, ~3.6B active; 128K context; strong general reasoning and tools."><span class="fit-name">gpt-oss-20b</span><span class="fit-meta">13.8 GB · MXFP4</span><span class="fit-badge">—</span></button><button type="button" class="fit-card" data-name="Devstral Small 2 24B" data-weights="14.33" data-command="ollama run hf.co/bartowski/mistralai_Devstral-Small-2-24B-Instruct-2512-GGUF:Q4_K_M" data-note="The standard four-bit Devstral build; better quality, one tier more memory."><span class="fit-name">Devstral Small 2 24B</span><span class="fit-meta">14.33 GB · Q4_K_M</span><span class="fit-badge">—</span></button><button type="button" class="fit-card" data-name="Gemma 4 26B-A4B" data-weights="16.95" data-command="ollama run gemma4:26b" data-note="26B MoE, ~4B active; 256K context; Apache 2.0."><span class="fit-name">Gemma 4 26B-A4B</span><span class="fit-meta">16.95 GB · Q4_K_M</span><span class="fit-badge">—</span></button><button type="button" class="fit-card" data-name="Qwen3.8-27B" data-weights="17" data-command="ollama run hf.co/Qwen/Qwen3.8-27B-GGUF:Q4_K_M" data-note="27B dense; 262K context; the base model behind Bonsai 2."><span class="fit-name">Qwen3.8-27B</span><span class="fit-meta">17 GB · Q4_K_M</span><span class="fit-badge">—</span></button><button type="button" class="fit-card" data-name="Qwen3-Coder-30B-A3B" data-weights="18" data-command="ollama run qwen3-coder:30b" data-note="30B MoE, 3.3B active; coding specialist; a 24 GB-class build."><span class="fit-name">Qwen3-Coder-30B-A3B</span><span class="fit-meta">18 GB · Q4_K_M</span><span class="fit-badge">—</span></button><button type="button" class="fit-card" data-name="Gemma 4 31B" data-weights="18.32" data-command="ollama run gemma4:31b" data-note="31B dense; at 24 GB the KV cache leaves only a short context."><span class="fit-name">Gemma 4 31B</span><span class="fit-meta">18.32 GB · Q4_K_M</span><span class="fit-badge">—</span></button></div><div class="fit-detail" data-fit-detail hidden><h3 data-detail-name></h3><p data-detail-note></p><div class="fit-command"><pre><code data-detail-command></code></pre><button type="button" data-copy-command>Copy command</button></div></div><p class="fit-note">Rule of thumb: weights + about 2 GB runtime + a context reserve. Check your runtime&#x27;s reported memory before you trust the badge.</p><p class="sr-only" data-fit-status aria-live="polite"></p></section>
+<script>
+(function () {
+  "use strict";
+  var root = document.getElementById("fit");
+  if (!root) { return; }
+  var key = "wc-fit-local-coding-fallback";
+  var memInputs = Array.prototype.slice.call(root.querySelectorAll("input[name=fit-memory]"));
+  var ctxInputs = Array.prototype.slice.call(root.querySelectorAll("input[name=fit-context]"));
+  var cards = Array.prototype.slice.call(root.querySelectorAll(".fit-card"));
+  var summary = root.querySelector("[data-fit-summary]");
+  var detail = root.querySelector("[data-fit-detail]");
+  var status = root.querySelector("[data-fit-status]");
+  var state = { memory: 16, context: "medium", model: "" };
+
+  try {
+    var saved = JSON.parse(localStorage.getItem(key));
+    if (saved && typeof saved === "object") {
+      if (saved.memory) { state.memory = Number(saved.memory); }
+      if (saved.context) { state.context = String(saved.context); }
+      if (saved.model) { state.model = String(saved.model); }
+    }
+  } catch (error) { /* the page still works without storage */ }
+
+  function save() {
+    try { localStorage.setItem(key, JSON.stringify(state)); } catch (error) {}
+  }
+  function announce(message) {
+    if (status) { status.textContent = message; }
+  }
+  function checkedContext() {
+    return ctxInputs.filter(function (item) { return item.checked; })[0];
+  }
+  function contextReserve() {
+    var input = checkedContext();
+    return input ? Number(input.getAttribute("data-reserve")) : 2;
+  }
+  function contextLabel() {
+    var input = checkedContext();
+    return input ? input.getAttribute("data-label") : "medium";
+  }
+  function showDetail(card) {
+    if (!detail) { return; }
+    detail.hidden = false;
+    root.querySelector("[data-detail-name]").textContent = card.getAttribute("data-name");
+    root.querySelector("[data-detail-note]").textContent = card.getAttribute("data-note");
+    root.querySelector("[data-detail-command]").textContent = card.getAttribute("data-command");
+    cards.forEach(function (item) { item.classList.toggle("is-selected", item === card); });
+    state.model = card.getAttribute("data-name");
+    save();
+  }
+  function render() {
+    var reserve = contextReserve();
+    var fit = 0;
+    cards.forEach(function (card) {
+      var weights = Number(card.getAttribute("data-weights"));
+      var need = weights + 2 + reserve;
+      var badge = card.querySelector(".fit-badge");
+      card.classList.remove("is-good", "is-tight", "is-no");
+      if (state.memory >= need + 3) {
+        card.classList.add("is-good");
+        badge.textContent = "fits with room";
+        fit += 1;
+      } else if (state.memory >= need) {
+        card.classList.add("is-tight");
+        badge.textContent = "tight";
+        fit += 1;
+      } else {
+        card.classList.add("is-no");
+        badge.textContent = "won't fit";
+      }
+    });
+    if (summary) {
+      summary.textContent = state.memory + " GB with a " + contextLabel() +
+        " context: " + fit + " of " + cards.length +
+        " fit. Pick a card for the command, or shorten the context to make room.";
+    }
+    var selected = cards.filter(function (card) {
+      return card.getAttribute("data-name") === state.model;
+    })[0];
+    if (selected) { showDetail(selected); }
+  }
+
+  memInputs.forEach(function (input) {
+    input.checked = Number(input.value) === state.memory;
+    input.addEventListener("change", function () {
+      state.memory = Number(input.value);
+      save();
+      render();
+      announce(state.memory + " GB selected.");
+    });
+  });
+  ctxInputs.forEach(function (input) {
+    input.checked = input.value === state.context;
+    input.addEventListener("change", function () {
+      state.context = input.value;
+      save();
+      render();
+      announce(contextLabel() + " context selected.");
+    });
+  });
+  cards.forEach(function (card) {
+    card.addEventListener("click", function () {
+      showDetail(card);
+      announce(card.getAttribute("data-name") + " selected.");
+    });
+  });
+  var copy = root.querySelector("[data-copy-command]");
+  if (copy) {
+    copy.addEventListener("click", function () {
+      var command = root.querySelector("[data-detail-command]").textContent;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(command).then(function () {
+          announce("Command copied.");
+        }, function () {
+          announce("Could not copy; select the command and copy it manually.");
+        });
+      } else {
+        announce("Select the command and copy it manually.");
+      }
+    });
+  }
+
+  render();
+})();
+</script>
+
 
       <section id="why">
         <h2>Why it matters</h2>
         <ul class="checklist">
-          <li>Default Rails and Sinatra apps reach this bug before authentication, so an unpatched app is exposed without needing a valid user.</li>
-          <li>Fixes exist on every maintained Ruby release line, so there&#x27;s no excuse requiring a major-version jump.</li>
-          <li>Self-hosted tools like GitLab, Mastodon and Discourse bundled an affected Ruby, so the fix may be a product update rather than your own code.</li>
+          <li>A free fallback when the API is rate-limited, down, or over budget.</li>
+          <li>Your code and prompts stay on the machine.</li>
+          <li>Matching a model to memory is a reusable skill, not a one-off setup.</li>
         </ul>
       </section>
 
@@ -187,53 +352,112 @@
           <img class="patch" src="/assets/brand/patch-320.7f34876db4.png" srcset="/assets/brand/patch-320.7f34876db4.png 320w, /assets/brand/patch-640.ee0c24400f.png 640w" sizes="120px" alt="Patch, the Working Copy badger, holding a code card" width="120" height="120">
           <div>
             <h2 id="run-title">Run this</h2>
-            <p>Print the Ruby, Rails and Bundler versions your own repository resolves, plus the local toolchain, before you upgrade or chase a memory bug.</p>
+            <p>Measure your memory, GPU and local-model tools, then see which open-weight coding models fit at a medium context. Read-only; downloads nothing.</p>
           </div>
         </div>
-        <div class="run-scope"><p class="section-note">The source for this edition is the Cloudflare blog post titled How Cloudflare WAF protects against ruby2shell (CVE-2026-132825). Use its project link if it names one, or run this check on your own setup.</p></div><div class="run-scope"><h3>Or run it on your own repository</h3><pre class="output"><code>python3 check-toolchain.py /path/to/your/repo</code></pre></div>
+        <div class="run-scope"><p class="section-note">The source for this edition is the Morph post titled Best Ollama Models 2026: 25+ Ranked by VRAM &amp; SWE-Bench. Use its project link if it names one, or run this check on your own setup.</p></div><div class="run-scope"><h3>Or run it on your own repository</h3><pre class="output"><code>python3 check-local-ai.py</code></pre></div>
         <div class="run-grid">
           <div class="run-step run-code">
             <h3>Copy snippet</h3>
             <pre><code id="run-snippet">#!/usr/bin/env python3
-&quot;&quot;&quot;Print the Ruby, Rails and Bundler versions a project actually runs.&quot;&quot;&quot;
+&quot;&quot;&quot;Report memory, GPU and local-model tools, and which models fit. Read-only.&quot;&quot;&quot;
 import pathlib
 import platform
+import re
 import shutil
 import subprocess
 import sys
 
 
-def version(label, command):
-    if not shutil.which(command):
-        return f&quot;  {label}: not found&quot;
+def shell(args):
     try:
-        result = subprocess.run([command, &quot;--version&quot;], capture_output=True, text=True, timeout=10)
-        line = (result.stdout or result.stderr).strip().splitlines()[0]
-        if &quot;not currently installed&quot; in line:
-            return f&quot;  {label}: not found&quot;
-        return f&quot;  {label}: {line}&quot;
-    except Exception as exc:
-        return f&quot;  {label}: error ({type(exc).__name__})&quot;
+        return subprocess.run(args, capture_output=True, text=True, timeout=10).stdout.strip()
+    except Exception:
+        return &quot;&quot;
 
 
-root = pathlib.Path(sys.argv[1] if len(sys.argv) &gt; 1 else &quot;.&quot;).resolve(strict=True)
-print(&quot;project:&quot;)
-for name in (&quot;Gemfile&quot;, &quot;Gemfile.lock&quot;):
-    print(f&quot;  {name}: {&#x27;found&#x27; if (root / name).is_file() else &#x27;absent&#x27;}&quot;)
-lock = root / &quot;Gemfile.lock&quot;
-if lock.is_file():
-    lines = lock.read_text(errors=&quot;replace&quot;).splitlines()
-    for number, line in enumerate(lines):
-        text = line.strip()
-        if text.startswith(&quot;rails (&quot;):
-            print(f&quot;  rails: {text[7:-1]} (Gemfile.lock)&quot;)
-        elif text == &quot;RUBY VERSION&quot; and number + 1 &lt; len(lines):
-            print(f&quot;  ruby: {lines[number + 1].strip().removeprefix(&#x27;ruby &#x27;).strip()} (Gemfile.lock)&quot;)
+def memory_gb():
+    if sys.platform == &quot;darwin&quot;:
+        raw = shell([&quot;sysctl&quot;, &quot;-n&quot;, &quot;hw.memsize&quot;])
+        return round(int(raw) / 1024**3) if raw.isdigit() else 0
+    if sys.platform.startswith(&quot;linux&quot;):
+        try:
+            for line in pathlib.Path(&quot;/proc/meminfo&quot;).read_text().splitlines():
+                if line.startswith(&quot;MemTotal:&quot;):
+                    return round(int(line.split()[1]) / 1024 / 1024)
+        except OSError:
+            pass
+    if sys.platform.startswith(&quot;win&quot;):
+        raw = shell([&quot;powershell&quot;, &quot;-NoProfile&quot;, &quot;-Command&quot;,
+                     &quot;(Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory&quot;])
+        return round(int(raw) / 1024**3) if raw.isdigit() else 0
+    return 0
 
-print(&quot;toolchain:&quot;)
-print(f&quot;  os: {platform.system()} {platform.release()} ({platform.machine()})&quot;)
-for label, command in ((&quot;ruby&quot;, &quot;ruby&quot;), (&quot;rails&quot;, &quot;rails&quot;), (&quot;bundle&quot;, &quot;bundle&quot;)):
-    print(version(label, command))
+
+def gpu_line():
+    if sys.platform == &quot;darwin&quot;:
+        text = shell([&quot;system_profiler&quot;, &quot;SPDisplaysDataType&quot;])
+        chip = re.search(r&quot;Chipset Model:\s*(.+)&quot;, text)
+        cores = re.search(r&quot;Total Number of Cores:\s*(\d+)&quot;, text)
+        vram = re.search(r&quot;VRAM \(Total\):\s*(.+)&quot;, text)
+        name = chip.group(1).strip() if chip else &quot;not detected&quot;
+        if &quot;Apple&quot; in name:
+            return name + (f&quot;, {cores.group(1)} GPU cores&quot; if cores else &quot;&quot;) + &quot; (unified memory)&quot;
+        return name + (f&quot;, {vram.group(1).strip()} VRAM&quot; if vram else &quot;&quot;)
+    if shutil.which(&quot;nvidia-smi&quot;):
+        out = shell([&quot;nvidia-smi&quot;, &quot;--query-gpu=name,memory.total&quot;, &quot;--format=csv,noheader&quot;])
+        if out:
+            return out.splitlines()[0].strip()
+    if sys.platform.startswith(&quot;win&quot;):
+        out = shell([&quot;powershell&quot;, &quot;-NoProfile&quot;, &quot;-Command&quot;,
+                     &quot;Get-CimInstance Win32_VideoController | Select-Object -First 1 -ExpandProperty Name&quot;])
+        if out:
+            return out.splitlines()[0].strip()
+    return &quot;not detected&quot;
+
+
+MODELS = [
+    (&quot;Ternary Bonsai 2 27B&quot;, &quot;PTQ1_0&quot;, 5.95),
+    (&quot;Ternary Bonsai 2 27B&quot;, &quot;PQ2_0&quot;, 7.21),
+    (&quot;Mellum2.1 Thinking&quot;, &quot;Q4_K_M&quot;, 8.07),
+    (&quot;Devstral Small 2 24B&quot;, &quot;IQ4_XS&quot;, 12.76),
+    (&quot;gpt-oss-20b&quot;, &quot;MXFP4&quot;, 13.8),
+    (&quot;Devstral Small 2 24B&quot;, &quot;Q4_K_M&quot;, 14.33),
+    (&quot;Gemma 4 26B-A4B&quot;, &quot;Q4_K_M&quot;, 16.95),
+    (&quot;Qwen3.8-27B&quot;, &quot;Q4_K_M&quot;, 17.0),
+    (&quot;Qwen3-Coder-30B-A3B&quot;, &quot;Q4_K_M&quot;, 18.0),
+    (&quot;Gemma 4 31B&quot;, &quot;Q4_K_M&quot;, 18.32),
+]
+
+print(f&quot;os: {platform.system()} {platform.release()} ({platform.machine()})&quot;)
+gpu = gpu_line()
+memory = memory_gb()
+shared = &quot;Apple&quot; in gpu and sys.platform == &quot;darwin&quot;
+print(f&quot;memory: {memory} GB total&quot; + (&quot; (shared by CPU and GPU)&quot; if shared else &quot;&quot;))
+print(f&quot;gpu: {gpu}&quot;)
+print(f&quot;disk free: {shutil.disk_usage(pathlib.Path.home()).free / 1024**3:.0f} GB&quot;)
+print(&quot;tools:&quot;)
+for label, names in ((&quot;ollama&quot;, (&quot;ollama&quot;,)), (&quot;llama-cli&quot;, (&quot;llama-cli&quot;,)), (&quot;lm studio&quot;, (&quot;lms&quot;,))):
+    print(f&quot;  {label}: {&#x27;found&#x27; if any(shutil.which(name) for name in names) else &#x27;not found&#x27;}&quot;)
+
+print(f&quot;models at {memory} GB, 2 GB runtime + 2 GB context reserve:&quot;)
+fit = 0
+for name, quant, weights in MODELS:
+    need = weights + 4
+    if memory &gt;= need + 3:
+        verdict = &quot;fits with room&quot;
+        fit += 1
+    elif memory &gt;= need:
+        verdict = &quot;tight&quot;
+        fit += 1
+    else:
+        verdict = &quot;won&#x27;t fit&quot;
+    if name == &quot;Gemma 4 31B&quot; and verdict == &quot;tight&quot;:
+        verdict = &quot;tight; only a short context fits&quot;
+    print(f&quot;  {name} {quant} ({weights:g} GB): {verdict}&quot;)
+print(f&quot;summary: {fit} of {len(MODELS)} fit at a medium context; the largest need a shorter context.&quot;)
+print(&quot;note: sizes vary by quantization. Apple silicon shares memory; a discrete GPU needs the model in VRAM.&quot;)
+print(&quot;This is a memory check, not a speed benchmark. Nothing is downloaded or changed.&quot;)
 </code></pre>
             <button class="btn-orange" data-copy-target="run-snippet">
               <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
@@ -243,25 +467,33 @@ for label, command in ((&quot;ruby&quot;, &quot;ruby&quot;), (&quot;rails&quot;,
           <div class="run-step">
             <h3>Open full example</h3>
             <p>The complete script, with the checks described above and a short explanation.</p>
-            <a class="run-link" href="/editions/2026-11-24/run/check-toolchain.py">check-toolchain.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+            <a class="run-link" href="/editions/2026-11-24/run/check-local-ai.py">check-local-ai.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
             <p class="mono-note">Python 3.15.2 · no dependencies</p>
           </div>
           <div class="run-step">
             <h3>View source</h3>
             <p>The upstream item this edition is built on.</p>
-            <a class="run-link" href="https://blog.cloudflare.com/ruby2shell-waf-protection/">Cloudflare blog<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a>
-            <a class="run-link" href="/editions/2026-11-24/run/check-toolchain.py">View check-toolchain.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+            <a class="run-link" href="https://www.morphllm.com/best-ollama-models">Morph<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a>
+            <a class="run-link" href="/editions/2026-11-24/run/check-local-ai.py">View check-local-ai.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
           </div>
           <div class="run-step run-result">
             <h3>Check your result</h3>
-            <pre class="output">project:
-  Gemfile: found
-  Gemfile.lock: found
-  rails: 8.0.4 (Gemfile.lock)
-  ruby: 3.4.5p100 (Gemfile.lock)</pre>
-            <p class="mono-note">Tested 2026-11-23 · Python 3.15.2 · local Ruby fixture</p>
-            <p class="provenance">Example output: Excerpt from a local Ruby fixture; your Rails and Ruby versions will differ.</p>
-            <p class="limit">This reads the Gemfile and Gemfile.lock and asks the local toolchain. It does not audit the app and cannot tell you whether a CVE applies to your dependency tree. This is not a security audit. No project code is executed.</p>
+            <pre class="output">os: Darwin 27.3.0 (arm64)
+memory: 24 GB total (shared by CPU and GPU)
+gpu: Apple M4, 10 GPU cores (unified memory)
+tools:
+  ollama: found
+  llama-cli: found
+models at 24 GB, 2 GB runtime + 2 GB context reserve:
+  Ternary Bonsai 2 27B PTQ1_0 (5.95 GB): fits with room
+  Mellum2.1 Thinking Q4_K_M (8.07 GB): fits with room
+  gpt-oss-20b MXFP4 (13.8 GB): fits with room
+  Qwen3.8-27B Q4_K_M (17 GB): fits with room
+  Gemma 4 31B Q4_K_M (18.32 GB): tight; only a short context fits
+summary: 10 of 10 fit at a medium context; the largest need a shorter context.</pre>
+            <p class="mono-note">Tested 2026-11-24 · Python 3.15.2 · 24 GB Apple M4</p>
+            <p class="provenance">Example output: Output from a local twenty-four gigabyte Mac; your memory, GPU, disk and tools will differ.</p>
+            <p class="limit">This reads memory, the GPU name and installed tools. It cannot predict speed, and a discrete GPU needs the model to fit in VRAM. Sizes are approximate and vary by quantization. This is not a benchmark or a security audit.</p>
             <p class="limit">This is a scope check, not a security audit.</p>
           </div>
         </div>
@@ -269,11 +501,11 @@ for label, command in ((&quot;ruby&quot;, &quot;ruby&quot;), (&quot;rails&quot;,
 
       <section id="agent">
         <h2>Hand it to your agent</h2>
-        <p>This agent reads your repository&#x27;s Ruby version files and prints the Ruby, Rails and Bundler versions your app actually resolves, plus the local toolchain. It stops after reporting, changing nothing, because the first job is seeing the version gap, not closing it.</p>
+        <p>Here is a prompt you can hand to your coding agent. It inventories the machine, picks the largest model that fits with headroom, and writes a short setup report. It stops before changing global settings or downloading anything without your approval.</p>
         <div class="agent-prompt">
           <h3>Agent prompt</h3>
           <p>Paste this into the coding agent you already use. It is written to inspect before editing and to stop at the approval boundary.</p>
-          <pre><code id="agent-prompt">You are auditing my setup for The Working Copy edition &quot;Ruby&#x27;s string bug is critical, so check your version before lunch&quot;. Work read-only until I approve changes. Read the source at https://blog.cloudflare.com/ruby2shell-waf-protection/, list every factual claim in the article, and check each one against that source. Report any claim the source does not support and any concrete step the article asks me to take. Do not print API keys, tokens, or credential-bearing URLs. Propose the smallest correction and wait for my approval before editing.</code></pre>
+          <pre><code id="agent-prompt">You are auditing my setup for The Working Copy edition &quot;Your laptop can run a coding model now, and the fallback is free&quot;. Work read-only until I approve changes. Read the source at https://www.morphllm.com/best-ollama-models, list every factual claim in the article, and check each one against that source. Report any claim the source does not support and any concrete step the article asks me to take. Do not print API keys, tokens, or credential-bearing URLs. Propose the smallest correction and wait for my approval before editing.</code></pre>
           <button class="btn-orange" data-copy-target="agent-prompt">
             <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
             <span>Copy agent prompt</span>
@@ -284,17 +516,24 @@ for label, command in ((&quot;ruby&quot;, &quot;ruby&quot;), (&quot;rails&quot;,
       <section id="watch">
         <h2>Also worth reading</h2>
         <ul class="watch-list">
-          <li><strong class="watch-title">The related integer overflow fix</strong><span class="watch-detail">The same Ruby releases also fix a related integer overflow in string case conversion, tracked as GHSA-87fm-7w84-j2px, so one upgrade closes both doors.</span></li>
-          <li><strong class="watch-title">Bundled-Ruby products you may run</strong><span class="watch-detail">GitLab, Mastodon, Discourse, OpenProject and Chatwoot all shipped an affected Ruby at disclosure time; watch their release feeds for patched builds.</span></li>
-          <li><strong class="watch-title">The WAF rules covering the gap</strong><span class="watch-detail">Cloudflare added blocking rules for ruby2shell to its Free and Managed Rulesets, on by default, useful as a bridge while you schedule the upgrade.</span></li>
+          <li><strong class="watch-title">Ternary Bonsai 2 27B</strong><span class="watch-detail">PrismML&#x27;s sizes, 262K context and Apache 2.0 terms.</span></li>
+          <li><strong class="watch-title">Mellum2.1 Thinking</strong><span class="watch-detail">JetBrains&#x27; 12B MoE coding model and its GGUF builds.</span></li>
+          <li><strong class="watch-title">Qwen3.8-27B</strong><span class="watch-detail">The dense 27B model behind many of these builds.</span></li>
         </ul>
       </section>
 
       <section id="sources">
         <h2>Sources</h2>
         <ul class="source-list source-list-inline">
-          <li><a href="https://blog.cloudflare.com/ruby2shell-waf-protection/">How Cloudflare WAF protects against ruby2shell (CVE-2026-132825)<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
-          <li><a href="/editions/2026-11-24/run/check-toolchain.py">The runnable example used in this article<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a></li>
+          <li><a href="https://www.morphllm.com/best-ollama-models">Best Ollama Models 2026: 25+ Ranked by VRAM &amp; SWE-Bench<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
+          <li><a href="https://docs.prismml.com/models/bonsai-2-27b">Ternary Bonsai 2 27B documentation<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
+          <li><a href="https://huggingface.co/JetBrains/Mellum2.1-12B-A2.5B-Thinking">Mellum2.1-12B-A2.5B-Thinking model card<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
+          <li><a href="https://github.com/AlibabaCloud-Official/Qwen3.8-27B">Qwen3.8-27B repository<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
+          <li><a href="https://developers.openai.com/cookbook/articles/gpt-oss/run-transformers">Running gpt-oss with Transformers<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
+          <li><a href="https://huggingface.co/mistralai/Devstral-Small-2-24B-Instruct-2512">Devstral Small 2 24B model card<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
+          <li><a href="https://github.com/QwenLM/Qwen3-Coder">Qwen3-Coder repository<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
+          <li><a href="https://ollama.com/library/gemma4">Gemma 4 model library<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
+          <li><a href="/editions/2026-11-24/run/check-local-ai.py">The runnable example used in this article<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a></li>
         </ul>
       </section>
     </div>
@@ -329,7 +568,7 @@ for label, command in ((&quot;ruby&quot;, &quot;ruby&quot;), (&quot;rails&quot;,
       <div class="listen-head"><h2>Run this</h2><span class="chip">Patch</span></div>
       <div class="aside-run">
         <img class="aside-patch" src="/assets/brand/patch-320.7f34876db4.png" alt="Patch, the Working Copy badger" width="72" height="72">
-        <p>Know the version before you chase the bug.</p>
+        <p>Measure the machine before you download the model.</p>
       </div>
       <button class="btn-orange" data-copy-target="run-snippet">
         <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
@@ -339,7 +578,7 @@ for label, command in ((&quot;ruby&quot;, &quot;ruby&quot;), (&quot;rails&quot;,
         <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
         <span>Copy agent prompt</span>
       </button>
-      <a class="btn-secondary" href="/editions/2026-11-24/run/check-toolchain.py">Open the full example<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+      <a class="btn-secondary" href="/editions/2026-11-24/run/check-local-ai.py">Open the full example<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
     </section>
 
     <section class="about-card">

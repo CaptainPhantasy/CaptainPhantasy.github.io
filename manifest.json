@@ -4,6 +4,14 @@
   "publisher": "Legacy AI",
   "editions": [
     {
+      "slug": "2026-11-24",
+      "date": "2026-11-24",
+      "title": "Ruby's string bug is critical, so check your version before lunch",
+      "excerpt": "A heap buffer overflow in default Rails and Sinatra apps hit this week, and the fix starts with knowing which Ruby you actually run.",
+      "duration": "8:14",
+      "url": "/editions/2026-11-24/"
+    },
+    {
       "slug": "2026-11-23",
       "date": "2026-11-23",
       "title": "You do not train the GGUF, you train the model behind it",

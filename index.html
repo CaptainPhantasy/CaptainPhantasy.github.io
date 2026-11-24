@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F5EDE0">
-<title>You do not train the GGUF, you train the model behind it — The Working Copy</title>
-<meta name="description" content="Both published walkthroughs end at a GGUF file. The teaching is everything before that: a small base model, a clean dataset, a merged adapter and a chat template that matches.">
-<meta property="og:title" content="You do not train the GGUF, you train the model behind it — The Working Copy">
-<meta property="og:description" content="Both published walkthroughs end at a GGUF file. The teaching is everything before that: a small base model, a clean dataset, a merged adapter and a chat template that matches.">
+<title>Ruby&#x27;s string bug is critical, so check your version before lunch — The Working Copy</title>
+<meta name="description" content="A heap buffer overflow in default Rails and Sinatra apps hit this week, and the fix starts with knowing which Ruby you actually run.">
+<meta property="og:title" content="Ruby&#x27;s string bug is critical, so check your version before lunch — The Working Copy">
+<meta property="og:description" content="A heap buffer overflow in default Rails and Sinatra apps hit this week, and the fix starts with knowing which Ruby you actually run.">
 <meta property="og:type" content="article">
 
 
@@ -91,7 +91,7 @@
 <div class="shell">
   <aside class="rail" aria-label="Article navigation">
     <div class="rail-block">
-      <p class="rail-date">November 23, 2026<span>Edition 007</span></p>
+      <p class="rail-date">November 24, 2026<span>Edition 008</span></p>
       <nav class="rail-nav" aria-label="In this article">
         <a class="rail-link" href="#story">The story</a>
         <a class="rail-link" href="#why">Why it matters</a>
@@ -120,13 +120,13 @@
     <p class="publication-intro">Practical notes from building agents, tools, and useful software. Each article connects an idea to code you can run—with source links, clear setup steps, and enough explanation to make it your own.</p>
 
     <header class="article-head">
-      <h1>You do not train the GGUF, you train the model behind it</h1>
-      <p class="article-lede">You cannot fine-tune a GGUF file. Every published walkthrough starts with the model&#x27;s original weights, trains a small adapter against them, merges it back, and only then converts the result into the packed file that Ollama runs. The order is the lesson.</p>
+      <h1>Ruby&#x27;s string bug is critical, so check your version before lunch</h1>
+      <p class="article-lede">The Ruby team disclosed ruby2shell, a critical heap buffer overflow in how Ruby changes the case of strings, on November 19. Rails and classic-style Sinatra apps hit the bug in their default configuration, before any login screen, and proofs of concept exist that achieve remote code execution. Before you panic-upgrade, find out which Ruby your app actually resolves to.</p>
       <div class="meta-line">
-        <span>November 23, 2026</span>
+        <span>November 24, 2026</span>
         <span class="meta-sep" aria-hidden="true"></span>
         <span>4 min read</span>
-        <span class="chip">Fine-tuning</span>
+        <span class="chip">Ruby toolchain</span>
       </div>
       <p class="byline">By Legacy AI</p>
     </header>
@@ -137,7 +137,7 @@
           <span class="listen-icon" aria-hidden="true"><svg class="icon"><use href="#i-headphones"/></svg></span>
           <span class="listen-bar-copy">
             <strong id="listen-title">Listen to this article</strong>
-            <span class="mono" data-audio-clock>7:34</span>
+            <span class="mono" data-audio-clock>8:14</span>
           </span>
           <svg class="icon listen-chevron" aria-hidden="true"><use href="#i-chevron-down"/></svg>
         </button>
@@ -154,34 +154,31 @@
           <button class="listen-control" data-audio-back aria-label="Rewind 10 seconds"><span class="mono">-10</span></button>
           <button class="listen-control" data-audio-stop aria-label="Stop audio">Stop</button>
           <button class="listen-control" data-audio-forward aria-label="Forward 10 seconds"><span class="mono">+10</span></button>
-          <a class="listen-control" href="/assets/audio/2026-11-23.a484a1c8c2.mp3" download>Download</a>
+          <a class="listen-control" href="/assets/audio/2026-11-24.562ac74834.mp3" download>Download</a>
         </div>
       </div>
-      <audio id="articleAudio" src="/assets/audio/2026-11-23.a484a1c8c2.mp3" preload="metadata"></audio>
+      <audio id="articleAudio" src="/assets/audio/2026-11-24.562ac74834.mp3" preload="metadata"></audio>
     </section>
 
     <div class="article-body">
       <section id="story">
-<h2>The GGUF is the finishing move</h2>
-<p>A GGUF is not a training format. It is the packed file that llama.cpp and Ollama run. In both of the published walkthroughs this edition draws on, the GGUF appears at the end: you train a model, merge the adapter, convert the merged model, quantize it, and only then serve it.</p>
-<p>What gets trained is a low-rank adapter, usually called LoRA. Instead of rewriting every weight in the base model, you train a small set of extra weights that sit beside the frozen model and steer its behavior. QLoRA is the same idea with one more economy: the frozen base model is loaded in a compressed four-bit form, which is what lets a modest graphics card hold a model that would not otherwise fit. You train the adapter against that compressed model, then merge it into a full-precision copy later.</p>
-<p>Start with a small base model. The beginner guide uses Phi-3-mini, a model under four billion parameters that loads in four-bit form in about six gigabytes of graphics memory, which is small enough for a free cloud notebook. The same guide puts seven- and eight-billion-parameter models at roughly twelve gigabytes, and a nine-billion model at about fourteen. The pipeline does not change with size; the small model just fails faster and costs less to fix.</p>
-<h2>Your data decides whether it works</h2>
-<p>Fine-tuning is not a way to pour facts into a model. The beginner guide lists fine-tuning to add facts as a common mistake and points to retrieval instead: search your own documents, hand the useful passages to the model, and let it answer from them. What fine-tuning is good at is behavior: the shape of an answer, a house style, a strict output format, a consistent way of classifying a request.</p>
-<p>The file is usually JSON Lines: one example per line, each one a short conversation with a system instruction, a user message and an assistant reply. The twelve-step walkthrough uses prompt and completion objects instead, and notes that the training loss is computed only on the completion, meaning the assistant&#x27;s answer is the part being taught. Either format works. What matters is that every line is valid, every example has an assistant turn, and the assistant turn is last.</p>
-<p>Hold examples back. The twelve-step walkthrough starts with eight hundred training rows and one hundred test rows, and those hundred never enter training; they are how you find out whether the model learned the task or memorized the answers. The beginner guide&#x27;s advice on size is several hundred to a few thousand well-curated examples. Before any of it, run the check on the page: it reports malformed lines, missing assistant turns and the shortest and longest example. It cannot judge quality, but it makes the cheap failures loud.</p>
-<h2>Train, merge, convert, run</h2>
-<p>The twelve-step walkthrough&#x27;s settings are a reasonable default: rank sixteen, alpha thirty-two, a small dropout, all linear layers, a learning rate of two times ten to the minus four, two epochs and an eight-bit paged optimizer. It warns against raising the learning rate for luck; push it higher and the loss can turn into not-a-number.</p>
-<p>When training finishes, merge the adapter into a full-precision copy of the base model, on the processor, and never into the compressed four-bit weights. The walkthrough is explicit: merging into the compressed weights re-quantizes the model and discards much of what the adapter learned. Then convert the merged model to a full-precision GGUF and quantize it, commonly to a four-bit format. On the walkthrough&#x27;s larger example the practical disk requirement is a hundred and fifty gigabytes, and the full-precision file is the first thing to delete after the quantized one passes.</p>
-<p>The last piece is the Modelfile, the recipe Ollama uses to create a runnable model. The walkthrough starts from the base model&#x27;s own Modelfile, which already contains the right chat template and stop tokens, and changes only the line that names the source file. The chat template is the format the model expects for a conversation: where the system prompt goes, how the user&#x27;s turn is marked, how the assistant&#x27;s turn begins. The beginner guide calls a template mismatch one of the hardest problems to diagnose, and the walkthrough warns that missing end-of-sequence handling causes endless generation. Evaluate on the held-out rows with temperature at zero, and count a parse failure as a miss.</p>
+<h2>What broke, and in plain words</h2>
+<p>A heap buffer overflow means a program writes past the end of a chunk of memory it was given, corrupting whatever was sitting next to it. In this case the trigger is something as boring as changing a string&#x27;s case, so an attacker doesn&#x27;t need a login to reach it: Veria Labs found that Ruby on Rails and classic-style Sinatra applications hit the bug in their default configuration, before any authentication. The flaw is tracked as CVE-2026-132825, rated Critical by the Ruby team, with a related integer overflow in the same string case-conversion code fixed in the same releases.</p>
+<p>The fixed versions are Ruby 3.3.14, 3.4.13, and 4.0.10, so there is a patch available no matter which release line you&#x27;re on. The awkward part is that self-hosted products bundling Ruby, including GitLab, Mastodon, Discourse, OpenProject, Chatwoot and GitHub Enterprise Server, shipped an affected Ruby in their latest release at the time of disclosure, so if you run any of those, the upgrade path goes through them, not just your own Gemfile.</p>
+<h2>Check your versions before you touch anything</h2>
+<p>The mistake everyone makes during a security scare is upgrading the thing they think they run instead of the thing they actually run. Ruby versions live in several places: the version pinned by your repository&#x27;s toolchain files, the version your terminal resolves to right now, and the version your Rails and Bundler gems were installed against. They are not always the same, and the gap between them is exactly where memory bugs hide.</p>
+<p>Run the example in the Run this block below against your own repository. It prints the Ruby, Rails and Bundler versions your repository resolves, plus the local toolchain versions. The observable output is a short table: if the Ruby line shows 3.3.14, 3.4.13, 4.0.10 or later, you&#x27;re patched and can go back to your day. If it shows anything older, you have found your afternoon. Nothing is changed by the script; it only reports, so it&#x27;s safe to run anywhere.</p>
+<h2>Patch first, then lean on the safety net</h2>
+<p>Cloudflare&#x27;s web application firewall, a filter that sits in front of your app and blocks known attack patterns, now blocks ruby2shell for every customer including Free plans, with two new rules enabled by default and set to Block. That is a genuine safety net, and the WAF rule for the related PHP flaws updated earlier even caught part of this class of pattern before disclosure. But the source post is blunt about it: the WAF is a compensating control, not a replacement for patching, because exploits can reach the bug through paths a WAF cannot see.</p>
+<p>So the order of operations is: run the version check, upgrade Ruby to a fixed release, and treat any firewall protection as the seatbelt you wear while the airbag gets installed. Your next concrete step is to run the check in your repository, note the Ruby line, and if it&#x27;s stale, plan the upgrade before the proofs of concept become working exploit kits.</p>
       </section>
 
       <section id="why">
         <h2>Why it matters</h2>
         <ul class="checklist">
-          <li>Both walkthroughs end at GGUF, so the file you download is the last thing you make, not the first thing you train.</li>
-          <li>A model under four billion parameters can train on a free cloud GPU, which makes the whole pipeline reachable from a laptop.</li>
-          <li>The chat template and the end-of-sequence token are the difference between a working model and one that babbles forever.</li>
+          <li>Default Rails and Sinatra apps reach this bug before authentication, so an unpatched app is exposed without needing a valid user.</li>
+          <li>Fixes exist on every maintained Ruby release line, so there&#x27;s no excuse requiring a major-version jump.</li>
+          <li>Self-hosted tools like GitLab, Mastodon and Discourse bundled an affected Ruby, so the fix may be a product update rather than your own code.</li>
         </ul>
       </section>
 
@@ -190,71 +187,53 @@
           <img class="patch" src="/assets/brand/patch-320.7f34876db4.png" srcset="/assets/brand/patch-320.7f34876db4.png 320w, /assets/brand/patch-640.ee0c24400f.png 640w" sizes="120px" alt="Patch, the Working Copy badger, holding a code card" width="120" height="120">
           <div>
             <h2 id="run-title">Run this</h2>
-            <p>Run this on your own machine against the JSONL file you plan to train on. It reports malformed lines, missing assistant turns and example counts before a single training step runs.</p>
+            <p>Print the Ruby, Rails and Bundler versions your own repository resolves, plus the local toolchain, before you upgrade or chase a memory bug.</p>
           </div>
         </div>
-        <div class="run-scope"><p class="section-note">The source for this edition is the Shattered post titled Fine-Tune an LLM With QLoRA: 12 Steps, 90 Min [2026]. Use its project link if it names one, or run this check on your own setup.</p></div><div class="run-scope"><h3>Or run it on your own repository</h3><pre class="output"><code>python3 check-dataset.py train.jsonl</code></pre></div>
+        <div class="run-scope"><p class="section-note">The source for this edition is the Cloudflare blog post titled How Cloudflare WAF protects against ruby2shell (CVE-2026-132825). Use its project link if it names one, or run this check on your own setup.</p></div><div class="run-scope"><h3>Or run it on your own repository</h3><pre class="output"><code>python3 check-toolchain.py /path/to/your/repo</code></pre></div>
         <div class="run-grid">
           <div class="run-step run-code">
             <h3>Copy snippet</h3>
             <pre><code id="run-snippet">#!/usr/bin/env python3
-&quot;&quot;&quot;Check a JSONL chat file before you spend GPU hours training. Read-only.&quot;&quot;&quot;
-import json
+&quot;&quot;&quot;Print the Ruby, Rails and Bundler versions a project actually runs.&quot;&quot;&quot;
 import pathlib
+import platform
+import shutil
+import subprocess
 import sys
 
 
-def messages_of(row):
-    if not isinstance(row, dict):
-        return None
-    if isinstance(row.get(&quot;messages&quot;), list):
-        return row[&quot;messages&quot;]
-    if isinstance(row.get(&quot;prompt&quot;), list):
-        return row[&quot;prompt&quot;] + (row.get(&quot;completion&quot;) or [])
-    return None
-
-
-def problem(line):
+def version(label, command):
+    if not shutil.which(command):
+        return f&quot;  {label}: not found&quot;
     try:
-        row = json.loads(line)
-    except ValueError as exc:
-        return f&quot;not valid JSON ({exc.msg})&quot;
-    messages = messages_of(row)
-    if not messages:
-        return &quot;no messages list&quot;
-    for message in messages:
-        if not isinstance(message, dict) or not isinstance(message.get(&quot;content&quot;), str) or not message[&quot;content&quot;].strip():
-            return &quot;a message has no text content&quot;
-    roles = [message.get(&quot;role&quot;) for message in messages]
-    if &quot;assistant&quot; not in roles:
-        return &quot;no assistant turn&quot;
-    if roles[-1] != &quot;assistant&quot;:
-        return &quot;last message is not the assistant&quot;
-    return &quot;&quot;
+        result = subprocess.run([command, &quot;--version&quot;], capture_output=True, text=True, timeout=10)
+        line = (result.stdout or result.stderr).strip().splitlines()[0]
+        if &quot;not currently installed&quot; in line:
+            return f&quot;  {label}: not found&quot;
+        return f&quot;  {label}: {line}&quot;
+    except Exception as exc:
+        return f&quot;  {label}: error ({type(exc).__name__})&quot;
 
 
-def main():
-    if len(sys.argv) != 2:
-        raise SystemExit(&quot;usage: check-dataset.py train.jsonl&quot;)
-    path = pathlib.Path(sys.argv[1])
-    lines = [(number, line) for number, line in enumerate(path.read_text(errors=&quot;replace&quot;).splitlines(), 1) if line.strip()]
-    problems, sizes = [], []
-    for number, line in lines:
-        issue = problem(line)
-        if issue:
-            problems.append(f&quot;line {number}: {issue}&quot;)
-        else:
-            sizes.append(sum(len(message[&quot;content&quot;].split()) for message in messages_of(json.loads(line))))
-    print(f&quot;examples: {len(lines) - len(problems)} of {len(lines)} non-empty lines&quot;)
-    if sizes:
-        print(f&quot;words per example: {min(sizes)} to {max(sizes)}&quot;)
-    print(f&quot;problems: {len(problems)}&quot;)
-    for item in problems:
-        print(item)
+root = pathlib.Path(sys.argv[1] if len(sys.argv) &gt; 1 else &quot;.&quot;).resolve(strict=True)
+print(&quot;project:&quot;)
+for name in (&quot;Gemfile&quot;, &quot;Gemfile.lock&quot;):
+    print(f&quot;  {name}: {&#x27;found&#x27; if (root / name).is_file() else &#x27;absent&#x27;}&quot;)
+lock = root / &quot;Gemfile.lock&quot;
+if lock.is_file():
+    lines = lock.read_text(errors=&quot;replace&quot;).splitlines()
+    for number, line in enumerate(lines):
+        text = line.strip()
+        if text.startswith(&quot;rails (&quot;):
+            print(f&quot;  rails: {text[7:-1]} (Gemfile.lock)&quot;)
+        elif text == &quot;RUBY VERSION&quot; and number + 1 &lt; len(lines):
+            print(f&quot;  ruby: {lines[number + 1].strip().removeprefix(&#x27;ruby &#x27;).strip()} (Gemfile.lock)&quot;)
 
-
-if __name__ == &quot;__main__&quot;:
-    main()
+print(&quot;toolchain:&quot;)
+print(f&quot;  os: {platform.system()} {platform.release()} ({platform.machine()})&quot;)
+for label, command in ((&quot;ruby&quot;, &quot;ruby&quot;), (&quot;rails&quot;, &quot;rails&quot;), (&quot;bundle&quot;, &quot;bundle&quot;)):
+    print(version(label, command))
 </code></pre>
             <button class="btn-orange" data-copy-target="run-snippet">
               <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
@@ -264,25 +243,25 @@ if __name__ == &quot;__main__&quot;:
           <div class="run-step">
             <h3>Open full example</h3>
             <p>The complete script, with the checks described above and a short explanation.</p>
-            <a class="run-link" href="/editions/2026-11-23/run/check-dataset.py">check-dataset.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+            <a class="run-link" href="/editions/2026-11-24/run/check-toolchain.py">check-toolchain.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
             <p class="mono-note">Python 3.15.2 · no dependencies</p>
           </div>
           <div class="run-step">
             <h3>View source</h3>
             <p>The upstream item this edition is built on.</p>
-            <a class="run-link" href="https://shattered.io/fine-tune-llm-qlora-12-steps-2026/">Shattered<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a>
-            <a class="run-link" href="/editions/2026-11-23/run/check-dataset.py">View check-dataset.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+            <a class="run-link" href="https://blog.cloudflare.com/ruby2shell-waf-protection/">Cloudflare blog<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a>
+            <a class="run-link" href="/editions/2026-11-24/run/check-toolchain.py">View check-toolchain.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
           </div>
           <div class="run-step run-result">
             <h3>Check your result</h3>
-            <pre class="output">examples: 1 of 3 non-empty lines
-words per example: 10 to 10
-problems: 2
-line 2: no assistant turn
-line 3: not valid JSON (Expecting value)</pre>
-            <p class="mono-note">Tested 2026-11-23 · Python 3.15.2 · local JSONL fixture</p>
-            <p class="provenance">Example output: Output from a local three-line fixture; your counts and messages will differ.</p>
-            <p class="limit">This checks structure only. A clean file can still be repetitive, mislabeled or leak your test set; none of that is visible here. This is not a training run and no model is loaded.</p>
+            <pre class="output">project:
+  Gemfile: found
+  Gemfile.lock: found
+  rails: 8.0.4 (Gemfile.lock)
+  ruby: 3.4.5p100 (Gemfile.lock)</pre>
+            <p class="mono-note">Tested 2026-11-23 · Python 3.15.2 · local Ruby fixture</p>
+            <p class="provenance">Example output: Excerpt from a local Ruby fixture; your Rails and Ruby versions will differ.</p>
+            <p class="limit">This reads the Gemfile and Gemfile.lock and asks the local toolchain. It does not audit the app and cannot tell you whether a CVE applies to your dependency tree. This is not a security audit. No project code is executed.</p>
             <p class="limit">This is a scope check, not a security audit.</p>
           </div>
         </div>
@@ -290,11 +269,11 @@ line 3: not valid JSON (Expecting value)</pre>
 
       <section id="agent">
         <h2>Hand it to your agent</h2>
-        <p>The agent prompt below asks an agent to read your JSON Lines file and your training notes, report the structural problems and the export steps you have not done, and stop before changing anything.</p>
+        <p>This agent reads your repository&#x27;s Ruby version files and prints the Ruby, Rails and Bundler versions your app actually resolves, plus the local toolchain. It stops after reporting, changing nothing, because the first job is seeing the version gap, not closing it.</p>
         <div class="agent-prompt">
           <h3>Agent prompt</h3>
           <p>Paste this into the coding agent you already use. It is written to inspect before editing and to stop at the approval boundary.</p>
-          <pre><code id="agent-prompt">You are auditing my setup for The Working Copy edition &quot;You do not train the GGUF, you train the model behind it&quot;. Work read-only until I approve changes. Read the source at https://shattered.io/fine-tune-llm-qlora-12-steps-2026/, list every factual claim in the article, and check each one against that source. Report any claim the source does not support and any concrete step the article asks me to take. Do not print API keys, tokens, or credential-bearing URLs. Propose the smallest correction and wait for my approval before editing.</code></pre>
+          <pre><code id="agent-prompt">You are auditing my setup for The Working Copy edition &quot;Ruby&#x27;s string bug is critical, so check your version before lunch&quot;. Work read-only until I approve changes. Read the source at https://blog.cloudflare.com/ruby2shell-waf-protection/, list every factual claim in the article, and check each one against that source. Report any claim the source does not support and any concrete step the article asks me to take. Do not print API keys, tokens, or credential-bearing URLs. Propose the smallest correction and wait for my approval before editing.</code></pre>
           <button class="btn-orange" data-copy-target="agent-prompt">
             <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
             <span>Copy agent prompt</span>
@@ -305,16 +284,17 @@ line 3: not valid JSON (Expecting value)</pre>
       <section id="watch">
         <h2>Also worth reading</h2>
         <ul class="watch-list">
-          <li><strong class="watch-title">The QLoRA twelve-step walkthrough</strong><span class="watch-detail">The full pipeline: dataset, four-bit loading, the CPU merge warning, GGUF conversion, quantization and held-out evaluation.</span></li>
-          <li><strong class="watch-title">The beginner guide with Phi-3-mini</strong><span class="watch-detail">A first run sized for a free Colab GPU, with the VRAM table and the chat-template warning.</span></li>
+          <li><strong class="watch-title">The related integer overflow fix</strong><span class="watch-detail">The same Ruby releases also fix a related integer overflow in string case conversion, tracked as GHSA-87fm-7w84-j2px, so one upgrade closes both doors.</span></li>
+          <li><strong class="watch-title">Bundled-Ruby products you may run</strong><span class="watch-detail">GitLab, Mastodon, Discourse, OpenProject and Chatwoot all shipped an affected Ruby at disclosure time; watch their release feeds for patched builds.</span></li>
+          <li><strong class="watch-title">The WAF rules covering the gap</strong><span class="watch-detail">Cloudflare added blocking rules for ruby2shell to its Free and Managed Rulesets, on by default, useful as a bridge while you schedule the upgrade.</span></li>
         </ul>
       </section>
 
       <section id="sources">
         <h2>Sources</h2>
         <ul class="source-list source-list-inline">
-          <li><a href="https://shattered.io/fine-tune-llm-qlora-12-steps-2026/">Fine-Tune an LLM With QLoRA: 12 Steps, 90 Min [2026]<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
-          <li><a href="/editions/2026-11-23/run/check-dataset.py">The runnable example used in this article<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a></li>
+          <li><a href="https://blog.cloudflare.com/ruby2shell-waf-protection/">How Cloudflare WAF protects against ruby2shell (CVE-2026-132825)<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
+          <li><a href="/editions/2026-11-24/run/check-toolchain.py">The runnable example used in this article<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a></li>
         </ul>
       </section>
     </div>
@@ -338,8 +318,8 @@ line 3: not valid JSON (Expecting value)</pre>
           <p>Ideas you can run. A developer publication from Legacy AI.</p>
         </div>
       </div>
-      <p class="foot-links"><a href="/archive/">Archive</a><a href="/editions/2026-11-23/audio/2026-11-23-narration.md">Audio transcript</a><a href="https://legacyai.space">Legacy AI</a><a href="https://floydslabs.com">Floyd's Labs</a></p>
-      <p>Edition 007, 2026-11-23. The written article is authoritative.</p>
+      <p class="foot-links"><a href="/archive/">Archive</a><a href="/editions/2026-11-24/audio/2026-11-24-narration.md">Audio transcript</a><a href="https://legacyai.space">Legacy AI</a><a href="https://floydslabs.com">Floyd's Labs</a></p>
+      <p>Edition 008, 2026-11-24. The written article is authoritative.</p>
       <p>Audio edition narrated by Uncle Burt. Built locally; no external CDN.</p>
     </footer>
   </main>
@@ -349,7 +329,7 @@ line 3: not valid JSON (Expecting value)</pre>
       <div class="listen-head"><h2>Run this</h2><span class="chip">Patch</span></div>
       <div class="aside-run">
         <img class="aside-patch" src="/assets/brand/patch-320.7f34876db4.png" alt="Patch, the Working Copy badger" width="72" height="72">
-        <p>Bad data fails quietly. This makes it fail loudly.</p>
+        <p>Know the version before you chase the bug.</p>
       </div>
       <button class="btn-orange" data-copy-target="run-snippet">
         <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
@@ -359,7 +339,7 @@ line 3: not valid JSON (Expecting value)</pre>
         <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
         <span>Copy agent prompt</span>
       </button>
-      <a class="btn-secondary" href="/editions/2026-11-23/run/check-dataset.py">Open the full example<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+      <a class="btn-secondary" href="/editions/2026-11-24/run/check-toolchain.py">Open the full example<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
     </section>
 
     <section class="about-card">

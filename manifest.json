@@ -4,6 +4,14 @@
   "publisher": "Legacy AI",
   "editions": [
     {
+      "slug": "2026-11-25",
+      "date": "2026-11-25",
+      "title": "A man served Qwen from 5,600 Lambdas and lost 80 times his money",
+      "excerpt": "Serverless made his model scale beautifully in the wrong direction. Before you wire a model into anything, find out where your requests actually go.",
+      "duration": "8:08",
+      "url": "/editions/2026-11-25/"
+    },
+    {
       "slug": "2026-11-24",
       "date": "2026-11-24",
       "title": "Your laptop can run a coding model now, and the fallback is free",

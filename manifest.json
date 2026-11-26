@@ -4,6 +4,14 @@
   "publisher": "Legacy AI",
   "editions": [
     {
+      "slug": "2026-11-26",
+      "date": "2026-11-26",
+      "title": "When the AI writes the code, the evidence is what you actually read",
+      "excerpt": "A Stack Overflow blog post asks what counts as evidence for machine-written code. The uncomfortable answer starts with you opening the repo yourself.",
+      "duration": "7:42",
+      "url": "/editions/2026-11-26/"
+    },
+    {
       "slug": "2026-11-25",
       "date": "2026-11-25",
       "title": "A man served Qwen from 5,600 Lambdas and lost 80 times his money",

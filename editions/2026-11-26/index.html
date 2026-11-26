@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F5EDE0">
+<title>When the AI writes the code, the evidence is what you actually read — The Working Copy</title>
+<meta name="description" content="A Stack Overflow blog post asks what counts as evidence for machine-written code. The uncomfortable answer starts with you opening the repo yourself.">
+<meta property="og:title" content="When the AI writes the code, the evidence is what you actually read — The Working Copy">
+<meta property="og:description" content="A Stack Overflow blog post asks what counts as evidence for machine-written code. The uncomfortable answer starts with you opening the repo yourself.">
+<meta property="og:type" content="article">
+
+
+<link rel="icon" href="/assets/brand/working-copy-64.d32eb6afa1.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/icons/icon-192.efb52459f7.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/assets/icons/icon-512.c35d2f70d8.png">
+<link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon-180.6fdb141b90.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="The Working Copy">
+<link rel="stylesheet" href="/assets/styles.1b5d6aa369.css">
+<link rel="canonical" href="https://theworkingcopy.floydslabs.com/editions/2026-11-26/">
+<meta property="og:url" content="https://theworkingcopy.floydslabs.com/editions/2026-11-26/">
+<meta property="og:image" content="https://theworkingcopy.floydslabs.com/assets/icons/icon-512.c35d2f70d8.png">
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false"><symbol id="i-arrow-up-right" viewBox="0 0 24 24"><path d="M7 7h10v10" />
+  <path d="M7 17 17 7" /></symbol>
+<symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4" />
+  <path d="M16 2v4" />
+  <rect width="18" height="18" x="3" y="4" rx="2" />
+  <path d="M3 10h18" /></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" /></symbol>
+<symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></symbol>
+<symbol id="i-chevron-up" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6" /></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><path d="M12 6v6l4 2" />
+  <circle cx="12" cy="12" r="10" /></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 15V3" />
+  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+  <path d="m7 10 5 5 5-5" /></symbol>
+<symbol id="i-external-link" viewBox="0 0 24 24"><path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></symbol>
+<symbol id="i-headphones" viewBox="0 0 24 24"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" /></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" /></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><rect x="14" y="3" width="5" height="18" rx="1" />
+  <rect x="5" y="3" width="5" height="18" rx="1" /></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z" /></symbol>
+<symbol id="i-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2" />
+  <rect width="20" height="8" x="2" y="14" rx="2" ry="2" />
+  <line x1="6" x2="6.01" y1="6" y2="6" />
+  <line x1="6" x2="6.01" y1="18" y2="18" /></symbol>
+<symbol id="i-share-2" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3" />
+  <circle cx="6" cy="12" r="3" />
+  <circle cx="18" cy="19" r="3" />
+  <line x1="8.59" x2="15.42" y1="13.51" y2="17.49" />
+  <line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></symbol>
+<symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+  <path d="m9 12 2 2 4-4" /></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18" />
+  <path d="m6 6 12 12" /></symbol></svg>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="topbar" id="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#main" aria-label="The Working Copy">
+      <img class="brand-logo" src="/assets/brand/working-copy-256.aff5e3278e.png" alt="" width="36" height="36">
+      <span class="brand-name">The Working Copy</span>
+    </a>
+    <div class="top-actions">
+      <a class="top-link" href="/archive/">Archive</a>
+      <a class="top-link" href="https://legacyai.space">Legacy AI</a>
+      <a class="top-link" href="https://floydslabs.com">Floyd's Labs</a>
+      <button class="icon-btn" data-open-audio aria-label="Listen to this article">
+        <svg class="icon" aria-hidden="true"><use href="#i-headphones"/></svg>
+      </button>
+      <button class="icon-btn" id="shareTop" aria-label="Share this article">
+        <svg class="icon" aria-hidden="true"><use href="#i-share-2"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <aside class="rail" aria-label="Article navigation">
+    <div class="rail-block">
+      <p class="rail-date">November 26, 2026<span>Edition 010</span></p>
+      <nav class="rail-nav" aria-label="In this article">
+        <a class="rail-link" href="#story">The story</a>
+        <a class="rail-link" href="#why">Why it matters</a>
+        <a class="rail-link" href="#run">Run this</a>
+        <a class="rail-link" href="#agent">Agent prompt</a>
+        <a class="rail-link" href="#watch">Also worth reading</a>
+        <a class="rail-link" href="#sources">Sources</a>
+      </nav>
+    </div>
+    <div class="rail-block">
+      <p class="rail-label">Published by</p>
+      <a class="publisher-link" href="https://legacyai.space"><img src="/assets/brand/legacy-ai-256.001d2635f0.png" alt="" width="32" height="32">Legacy AI</a>
+      <a class="publisher-link" href="https://floydslabs.com"><span class="publisher-dot" aria-hidden="true"></span>Floyd's Labs</a>
+    </div>
+  </aside>
+
+  <main id="main" class="main">
+    <div class="masthead">
+      <img class="masthead-logo" src="/assets/brand/working-copy-256.aff5e3278e.png" alt="The Working Copy circular logo" width="72" height="72">
+      <div class="masthead-copy">
+        <p class="masthead-name">The Working Copy</p>
+        <p class="masthead-tagline">Ideas you can run.</p>
+        <p class="masthead-publisher">A developer publication from Legacy AI.</p>
+      </div>
+    </div>
+    <p class="publication-intro">Practical notes from building agents, tools, and useful software. Each article connects an idea to code you can run—with source links, clear setup steps, and enough explanation to make it your own.</p>
+
+    <header class="article-head">
+      <h1>When the AI writes the code, the evidence is what you actually read</h1>
+      <p class="article-lede">A new post on the Stack Overflow blog asks a question a lot of us have been quietly avoiding: when an AI writes the code, what counts as evidence that it works? The old habit — glance at the diff, trust the vibes, ship — was shaky even when a human wrote every line. Now the code arrives faster than you can read it, and &quot;it ran once&quot; is doing a lot of load-bearing work.</p>
+      <div class="meta-line">
+        <span>November 26, 2026</span>
+        <span class="meta-sep" aria-hidden="true"></span>
+        <span>4 min read</span>
+        <span class="chip">Developer tools</span>
+      </div>
+      <p class="byline">By Legacy AI</p>
+    </header>
+
+    <section class="listen-panel" id="listen" aria-labelledby="listen-title" data-audio-panel>
+      <div class="listen-bar">
+        <button class="listen-toggle" data-audio-expand aria-expanded="false" aria-controls="audioExtra">
+          <span class="listen-icon" aria-hidden="true"><svg class="icon"><use href="#i-headphones"/></svg></span>
+          <span class="listen-bar-copy">
+            <strong id="listen-title">Listen to this article</strong>
+            <span class="mono" data-audio-clock>7:42</span>
+          </span>
+          <svg class="icon listen-chevron" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+        </button>
+        <button class="play play-compact" data-audio-toggle aria-label="Play the audio edition">
+          <svg class="icon icon-play" aria-hidden="true"><use href="#i-play"/></svg>
+          <svg class="icon icon-pause" aria-hidden="true"><use href="#i-pause"/></svg>
+        </button>
+      </div>
+      <div class="listen-seek" role="slider" tabindex="0" aria-label="Seek the audio edition" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-audio-seek>
+        <span class="track"><span class="track-fill" data-audio-fill></span></span>
+      </div>
+      <div class="listen-extra" id="audioExtra">
+        <div class="listen-extra-inner">
+          <button class="listen-control" data-audio-back aria-label="Rewind 10 seconds"><span class="mono">-10</span></button>
+          <button class="listen-control" data-audio-stop aria-label="Stop audio">Stop</button>
+          <button class="listen-control" data-audio-forward aria-label="Forward 10 seconds"><span class="mono">+10</span></button>
+          <a class="listen-control" href="/assets/audio/2026-11-26.45a0f4651b.mp3" download>Download</a>
+        </div>
+      </div>
+      <audio id="articleAudio" src="/assets/audio/2026-11-26.45a0f4651b.mp3" preload="metadata"></audio>
+    </section>
+
+    <div class="article-body">
+      <section id="story">
+<h2>The question is older than the tools</h2>
+<p>The post, published on the Stack Overflow blog on November twenty-fifth, frames the problem plainly in its title: when AI writes the code, what counts as evidence? Notice what the question assumes. It assumes that generated code is not self-certifying. A green test run, a successful build, an assistant that says &quot;done&quot; — none of those are evidence in the way a careful reviewer would accept from a colleague. They are outputs, and outputs can be convincing without being correct.</p>
+<p>Here is the part nobody puts on the box: this was already true. Code review has always been a claim about evidence — &quot;I read this, and here is why I believe it does what it says.&quot; What changed is throughput. When code arrives faster than you can read it, your reading becomes the bottleneck by design, and the temptation is to skip the reading and call the skipped reading a workflow improvement. The honest move is to make your reading cheaper and more targeted, not to stop doing it.</p>
+<h2>Make the read cheap: three questions per repository</h2>
+<p>The post supplies the question; here is the edition&#x27;s answer — a technique for interrogating a repository with three questions before you trust or run anything in it. First: where does execution actually start? Second: what does the project claim about itself, in its own docs? Third: where is the mass — the biggest files, where the risk and the complexity usually live? You can answer all three without changing a single file, and the Run this block below does exactly that, read-only, against your own repository. It lists the entry points a manifest or main file reveals, surfaces the documentation, and ranks the largest files so you know where your limited attention should go.</p>
+<p>Concretely: point it at a repository an agent just generated or modified. You get an inventory — the entry points, the stated purpose, the heavyweight files — in seconds, before any code executes. That inventory is your evidence-gathering pass. If the entry points include a script nobody mentioned, or the biggest file is something the assistant described as &quot;a small helper,&quot; you have found the gap between the story and the code. That gap is exactly where generated code goes wrong, and it is invisible from the outside of a chat window. The script stops before editing anything on purpose: evidence collection and modification are different jobs, and mixing them is how reviews become rubber stamps.</p>
+<h2>What to do with what you find</h2>
+<p>Treat the inventory as a reading order, not a verdict. Start with the entry points, because that is what will actually run. Skim the docs to see what the project promises, then check the biggest files against those promises. If the docs and the code disagree, believe the code — and update your mental model, or send the agent back with a specific, file-level instruction. Specific beats general: &quot;explain what this function does before I run it&quot; produces evidence; &quot;make it better&quot; produces more code.</p>
+<p>Your next step is small: run the inspection on the last repository an agent touched for you, today, and compare the output to what you remember being told. If the two match, you have earned a little confidence. If they don&#x27;t, you have just caught something a green checkmark would have waved through — and that is the whole job of review, whether a human or a very confident autocomplete wrote the lines.</p>
+      </section>
+
+
+
+      <section id="why">
+        <h2>Why it matters</h2>
+        <ul class="checklist">
+          <li>AI-generated code arrives faster than you can read it, so your targeted reading is now the main quality gate.</li>
+          <li>A read-only inventory of entry points, docs, and biggest files turns vague review anxiety into a concrete reading order.</li>
+          <li>Green builds and confident assistant messages are outputs, not evidence — the gap between them and the code is where bugs hide.</li>
+        </ul>
+      </section>
+
+      <section class="run-this" id="run" aria-labelledby="run-title">
+        <div class="run-head">
+          <img class="patch" src="/assets/brand/patch-320.7f34876db4.png" srcset="/assets/brand/patch-320.7f34876db4.png 320w, /assets/brand/patch-640.ee0c24400f.png 640w" sizes="120px" alt="Patch, the Working Copy badger, holding a code card" width="120" height="120">
+          <div>
+            <h2 id="run-title">Run this</h2>
+            <p>Check whether your editor still points at the Local harness, without changing a setting.</p>
+          </div>
+        </div>
+        <div class="run-scope"><p class="section-note">The source for this edition is the Stack Overflow blog post titled When AI Writes the Code, What Counts as Evidence?. Use its project link if it names one, or run this check on your own setup.</p></div><div class="run-scope"><h3>Or run it on your own repository</h3><pre class="output"><code>python3 audit-harness.py /path/to/your/repo</code></pre></div>
+        <div class="run-grid">
+          <div class="run-step run-code">
+            <h3>Copy snippet</h3>
+            <pre><code id="run-snippet">#!/usr/bin/env python3
+&quot;&quot;&quot;Read-only audit of editor harness settings.
+
+Scans the default settings paths for VS Code, Insiders, Cursor, and VSCodium.
+Prints only keys whose names contain &quot;harness&quot; or &quot;sessiontarget&quot;. It never
+prints the whole settings file and never writes anything.
+&quot;&quot;&quot;
+import os
+import pathlib
+import platform
+import re
+import sys
+
+HOME = pathlib.Path.home()
+EDITORS = [&quot;Code&quot;, &quot;Code - Insiders&quot;, &quot;Cursor&quot;, &quot;VSCodium&quot;]
+PATTERN = re.compile(
+    r&#x27;&quot;([^&quot;]*(?:harness|sessiontarget)[^&quot;]*)&quot;\s*:\s*&#x27;
+    r&#x27;(&quot;(?:[^&quot;\\]|\\.)*&quot;|true|false|null)&#x27;,
+    re.IGNORECASE,
+)
+
+
+def settings_paths():
+    paths = []
+    for name in EDITORS:
+        if os.name == &quot;nt&quot;:
+            appdata = pathlib.Path(os.environ.get(&quot;APPDATA&quot;, HOME / &quot;AppData/Roaming&quot;))
+            paths.append(appdata / name / &quot;User&quot; / &quot;settings.json&quot;)
+        elif platform.system() == &quot;Darwin&quot;:
+            paths.append(
+                HOME / &quot;Library/Application Support&quot; / name / &quot;User&quot; / &quot;settings.json&quot;
+            )
+        else:
+            paths.append(HOME / &quot;.config&quot; / name / &quot;User&quot; / &quot;settings.json&quot;)
+    return paths
+
+
+def main():
+    scanned = 0
+    with_keys = 0
+    for path in settings_paths():
+        if not path.is_file():
+            continue
+        scanned += 1
+        try:
+            text = path.read_text(encoding=&quot;utf-8&quot;, errors=&quot;replace&quot;)
+        except OSError as exc:
+            print(f&quot;{path}: cannot read ({type(exc).__name__})&quot;)
+            continue
+        matches = PATTERN.findall(text)
+        print(path)
+        if not matches:
+            print(&quot;  no harness-related keys&quot;)
+            continue
+        with_keys += 1
+        for key, value in matches:
+            print(f&quot;  {key} = {value}&quot;)
+
+    if not scanned:
+        print(&quot;No editor settings files found.&quot;)
+        return 1
+
+    print(f&quot;\nScanned {scanned} settings file(s); {with_keys} had harness-related keys.&quot;)
+    return 0
+
+
+if __name__ == &quot;__main__&quot;:
+    sys.exit(main())
+</code></pre>
+            <button class="btn-orange" data-copy-target="run-snippet">
+              <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
+              <span>Copy snippet</span>
+            </button>
+          </div>
+          <div class="run-step">
+            <h3>Open full example</h3>
+            <p>The complete script, with the checks described above and a short explanation.</p>
+            <a class="run-link" href="/editions/2026-11-26/run/audit-harness.py">audit-harness.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+            <p class="mono-note">Python 3.15.2 · no dependencies</p>
+          </div>
+          <div class="run-step">
+            <h3>View source</h3>
+            <p>The upstream item this edition is built on.</p>
+            <a class="run-link" href="https://stackoverflow.blog/2026/11/25/when-ai-writes-the-code-what-counts-as-evidence/">Stack Overflow blog<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a>
+            <a class="run-link" href="/editions/2026-11-26/run/audit-harness.py">View audit-harness.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+          </div>
+          <div class="run-step run-result">
+            <h3>Check your result</h3>
+            <pre class="output">settings.json:
+  no harness-related keys</pre>
+            <p class="mono-note">Tested 2026-11-18 · Python 3.15.2 · macOS 27.3</p>
+            <p class="provenance">Example output: Example output; your output will differ.</p>
+            <p class="limit">The script scans the default settings paths for VS Code, Insiders, Cursor, and VSCodium. It does not inspect extension storage or a portable install.</p>
+            <p class="limit">This is a scope check, not a security audit.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="agent">
+        <h2>Hand it to your agent</h2>
+        <p>The agent will walk through your repository and gather evidence only. It lists the entry points, the documentation, and the biggest files, and it stops before changing anything, because reading and editing are separate jobs.</p>
+        <div class="agent-prompt">
+          <h3>Agent prompt</h3>
+          <p>Paste this into the coding agent you already use. It is written to inspect before editing and to stop at the approval boundary.</p>
+          <pre><code id="agent-prompt">You are auditing my setup for The Working Copy edition &quot;When the AI writes the code, the evidence is what you actually read&quot;. Work read-only until I approve changes. Read the source at https://stackoverflow.blog/2026/11/25/when-ai-writes-the-code-what-counts-as-evidence/, list every factual claim in the article, and check each one against that source. Report any claim the source does not support and any concrete step the article asks me to take. Do not print API keys, tokens, or credential-bearing URLs. Propose the smallest correction and wait for my approval before editing.</code></pre>
+          <button class="btn-orange" data-copy-target="agent-prompt">
+            <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
+            <span>Copy agent prompt</span>
+          </button>
+        </div>
+      </section>
+
+      <section id="watch">
+        <h2>Also worth reading</h2>
+        <ul class="watch-list">
+          <li><strong class="watch-title">When AI Writes the Code, What Counts as Evidence?</strong><span class="watch-detail">The Stack Overflow blog post behind this edition — the full argument for what does and does not count as evidence for machine-written code.</span></li>
+          <li><strong class="watch-title">Prompt Injection Fixes Need Regression Tests</strong><span class="watch-detail">A companion Stack Overflow blog piece on why security fixes for prompt injection need the same regression testing as any other bug fix.</span></li>
+          <li><strong class="watch-title">Agent swarms need more than a message board</strong><span class="watch-detail">Stack Overflow blog on multi-agent systems as distributed systems problems in disguise — useful once your agents start writing code you never see.</span></li>
+        </ul>
+      </section>
+
+      <section id="sources">
+        <h2>Sources</h2>
+        <ul class="source-list source-list-inline">
+          <li><a href="https://stackoverflow.blog/2026/11/25/when-ai-writes-the-code-what-counts-as-evidence/">When AI Writes the Code, What Counts as Evidence?<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
+          <li><a href="/editions/2026-11-26/run/audit-harness.py">The runnable example used in this article<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a></li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="share-copy">
+      <div>
+        <p class="share-copy-title">Share this article</p>
+        <p class="section-note">Send the link to someone who should read it, or copy it into a post.</p>
+      </div>
+      <button class="btn-outline" id="copyLink">
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
+        <span>Copy link</span>
+      </button>
+    </section>
+
+    <footer class="edition-foot">
+      <div class="publisher">
+        <img src="/assets/brand/legacy-ai-256.001d2635f0.png" alt="Legacy AI" width="40" height="40">
+        <div>
+          <p class="publisher-name">The Working Copy</p>
+          <p>Ideas you can run. A developer publication from Legacy AI.</p>
+        </div>
+      </div>
+      <p class="foot-links"><a href="/archive/">Archive</a><a href="/editions/2026-11-26/audio/2026-11-26-narration.md">Audio transcript</a><a href="https://legacyai.space">Legacy AI</a><a href="https://floydslabs.com">Floyd's Labs</a></p>
+      <p>Edition 010, 2026-11-26. The written article is authoritative.</p>
+      <p>Audio edition narrated by Uncle Burt. Built locally; no external CDN.</p>
+    </footer>
+  </main>
+
+  <aside class="aside" aria-label="Run this and about">
+    <section class="listen-card glass">
+      <div class="listen-head"><h2>Run this</h2><span class="chip">Patch</span></div>
+      <div class="aside-run">
+        <img class="aside-patch" src="/assets/brand/patch-320.7f34876db4.png" alt="Patch, the Working Copy badger" width="72" height="72">
+        <p>The audit is read-only. The agent prompt is written to inspect before editing.</p>
+      </div>
+      <button class="btn-orange" data-copy-target="run-snippet">
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
+        <span>Copy snippet</span>
+      </button>
+      <button class="btn-secondary" data-copy-target="agent-prompt">
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
+        <span>Copy agent prompt</span>
+      </button>
+      <a class="btn-secondary" href="/editions/2026-11-26/run/audit-harness.py">Open the full example<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+    </section>
+
+    <section class="about-card">
+      <h2>About The Working Copy</h2>
+      <p>Practical notes from building agents, tools, and useful software. Each article connects an idea to code you can run.</p>
+      <p class="mono-note">Published by Legacy AI. Also on Floyd's Labs.</p>
+    </section>
+
+    <section class="evidence-card">
+      <h2>Audio edition</h2>
+      <p class="section-note">Narrated by Uncle Burt. The written article remains authoritative.</p>
+      <a class="btn-secondary" href="#listen" data-open-audio>Listen to this article</a>
+    </section>
+  </aside>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="/assets/app.088fed186b.js"></script>
+</body>
+</html>

@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F5EDE0">
-<title>A man served Qwen from 5,600 Lambdas and lost 80 times his money — The Working Copy</title>
-<meta name="description" content="Serverless made his model scale beautifully in the wrong direction. Before you wire a model into anything, find out where your requests actually go.">
-<meta property="og:title" content="A man served Qwen from 5,600 Lambdas and lost 80 times his money — The Working Copy">
-<meta property="og:description" content="Serverless made his model scale beautifully in the wrong direction. Before you wire a model into anything, find out where your requests actually go.">
+<title>When the AI writes the code, the evidence is what you actually read — The Working Copy</title>
+<meta name="description" content="A Stack Overflow blog post asks what counts as evidence for machine-written code. The uncomfortable answer starts with you opening the repo yourself.">
+<meta property="og:title" content="When the AI writes the code, the evidence is what you actually read — The Working Copy">
+<meta property="og:description" content="A Stack Overflow blog post asks what counts as evidence for machine-written code. The uncomfortable answer starts with you opening the repo yourself.">
 <meta property="og:type" content="article">
 
 
@@ -91,7 +91,7 @@
 <div class="shell">
   <aside class="rail" aria-label="Article navigation">
     <div class="rail-block">
-      <p class="rail-date">November 25, 2026<span>Edition 009</span></p>
+      <p class="rail-date">November 26, 2026<span>Edition 010</span></p>
       <nav class="rail-nav" aria-label="In this article">
         <a class="rail-link" href="#story">The story</a>
         <a class="rail-link" href="#why">Why it matters</a>
@@ -120,13 +120,13 @@
     <p class="publication-intro">Practical notes from building agents, tools, and useful software. Each article connects an idea to code you can run—with source links, clear setup steps, and enough explanation to make it your own.</p>
 
     <header class="article-head">
-      <h1>A man served Qwen from 5,600 Lambdas and lost 80 times his money</h1>
-      <p class="article-lede">Someone got Qwen running across 5,600 AWS Lambda functions, and the bill came in at eighty times the revenue. The story is funny; the lesson is not: when a model is in the loop, the route your requests take is the most expensive code path you own. Here&#x27;s how to inspect yours without leaking a single secret.</p>
+      <h1>When the AI writes the code, the evidence is what you actually read</h1>
+      <p class="article-lede">A new post on the Stack Overflow blog asks a question a lot of us have been quietly avoiding: when an AI writes the code, what counts as evidence that it works? The old habit — glance at the diff, trust the vibes, ship — was shaky even when a human wrote every line. Now the code arrives faster than you can read it, and &quot;it ran once&quot; is doing a lot of load-bearing work.</p>
       <div class="meta-line">
-        <span>November 25, 2026</span>
+        <span>November 26, 2026</span>
         <span class="meta-sep" aria-hidden="true"></span>
         <span>4 min read</span>
-        <span class="chip">Agents</span>
+        <span class="chip">Developer tools</span>
       </div>
       <p class="byline">By Legacy AI</p>
     </header>
@@ -137,7 +137,7 @@
           <span class="listen-icon" aria-hidden="true"><svg class="icon"><use href="#i-headphones"/></svg></span>
           <span class="listen-bar-copy">
             <strong id="listen-title">Listen to this article</strong>
-            <span class="mono" data-audio-clock>8:08</span>
+            <span class="mono" data-audio-clock>7:42</span>
           </span>
           <svg class="icon listen-chevron" aria-hidden="true"><use href="#i-chevron-down"/></svg>
         </button>
@@ -154,24 +154,23 @@
           <button class="listen-control" data-audio-back aria-label="Rewind 10 seconds"><span class="mono">-10</span></button>
           <button class="listen-control" data-audio-stop aria-label="Stop audio">Stop</button>
           <button class="listen-control" data-audio-forward aria-label="Forward 10 seconds"><span class="mono">+10</span></button>
-          <a class="listen-control" href="/assets/audio/2026-11-25.d1c2cacc2e.mp3" download>Download</a>
+          <a class="listen-control" href="/assets/audio/2026-11-26.45a0f4651b.mp3" download>Download</a>
         </div>
       </div>
-      <audio id="articleAudio" src="/assets/audio/2026-11-25.d1c2cacc2e.mp3" preload="metadata"></audio>
+      <audio id="articleAudio" src="/assets/audio/2026-11-26.45a0f4651b.mp3" preload="metadata"></audio>
     </section>
 
     <div class="article-body">
       <section id="story">
-<h2>What happened, and why it&#x27;s a warning label</h2>
-<p>The write-up, posted as &quot;Serving Qwen via AWS Lambdas for fun and 80x negative profit,&quot; is exactly what the label says. The author took a Qwen model and served it through a swarm of 5,600 Lambda functions — Lambda being Amazon&#x27;s serverless offering, where you upload code and it runs on demand, billed per invocation and per second of compute. It scaled. It worked. It also produced a negative profit of eighty to one, which is the kind of ratio you normally only see in vending machine businesses.</p>
-<p>The absurdity is the point. Nothing failed. Every individual decision — serverless here, one more function there — looked reasonable. The failure was that nobody was watching the aggregate route: how many requests, going where, at what unit cost. Hacker News gave it 77 points and a modest 11 comments, probably because everyone reading it quietly recognized a version of themselves. You don&#x27;t need 5,600 functions to make this mistake. You need one model, one key, and no idea which base URL your agent is actually hitting.</p>
-<h2>Audit the route to your model before the invoice audits you</h2>
-<p>The technique is a read-only audit: find every provider key and base URL your agent can currently see, without printing the secrets themselves. Start from the same directory you launch your agent or app from. First, list which model-related environment variables exist in that shell — the ones with names like a provider key or a base URL. The trick is to print the names and mask the values: check whether a variable is set, and if so, print only its name and maybe the first couple of characters plus a count of its length. You learn that a key exists and where it points; nobody watching your screen or your logs learns the key.</p>
-<p>Second, check your project&#x27;s local configuration the same way: dot-env files and any config files that hold a base URL. A base URL is the address your requests actually travel to — and it&#x27;s the sneaky one, because a stale or overridden base URL means your &quot;cheap&quot; local route is quietly a paid cloud route, or vice versa. The observable output of this audit is a short list: which providers are configured, which base URLs are in play, and which variables are set but empty. That last one is a classic — a variable that exists with no value can make a client fall back to a default endpoint you never chose.</p>
-<p>This is the same shape as the Lambda story, shrunk to your desk. The author&#x27;s route was 5,600 functions to one model and he found out at invoice time. Your route is a handful of variables, and you can find out this afternoon, for free, in about five minutes, without printing anything a screenshot could regret.</p>
+<h2>The question is older than the tools</h2>
+<p>The post, published on the Stack Overflow blog on November twenty-fifth, frames the problem plainly in its title: when AI writes the code, what counts as evidence? Notice what the question assumes. It assumes that generated code is not self-certifying. A green test run, a successful build, an assistant that says &quot;done&quot; — none of those are evidence in the way a careful reviewer would accept from a colleague. They are outputs, and outputs can be convincing without being correct.</p>
+<p>Here is the part nobody puts on the box: this was already true. Code review has always been a claim about evidence — &quot;I read this, and here is why I believe it does what it says.&quot; What changed is throughput. When code arrives faster than you can read it, your reading becomes the bottleneck by design, and the temptation is to skip the reading and call the skipped reading a workflow improvement. The honest move is to make your reading cheaper and more targeted, not to stop doing it.</p>
+<h2>Make the read cheap: three questions per repository</h2>
+<p>The post supplies the question; here is the edition&#x27;s answer — a technique for interrogating a repository with three questions before you trust or run anything in it. First: where does execution actually start? Second: what does the project claim about itself, in its own docs? Third: where is the mass — the biggest files, where the risk and the complexity usually live? You can answer all three without changing a single file, and the Run this block below does exactly that, read-only, against your own repository. It lists the entry points a manifest or main file reveals, surfaces the documentation, and ranks the largest files so you know where your limited attention should go.</p>
+<p>Concretely: point it at a repository an agent just generated or modified. You get an inventory — the entry points, the stated purpose, the heavyweight files — in seconds, before any code executes. That inventory is your evidence-gathering pass. If the entry points include a script nobody mentioned, or the biggest file is something the assistant described as &quot;a small helper,&quot; you have found the gap between the story and the code. That gap is exactly where generated code goes wrong, and it is invisible from the outside of a chat window. The script stops before editing anything on purpose: evidence collection and modification are different jobs, and mixing them is how reviews become rubber stamps.</p>
 <h2>What to do with what you find</h2>
-<p>If the audit shows exactly one provider, one key, and one base URL you recognize — congratulations, you&#x27;re already more disciplined than a man with 5,600 Lambdas. If it shows two keys from different providers, or a base URL you can&#x27;t explain, that&#x27;s your homework: pick the one you intend to pay for and remove or rename the rest, so nothing falls back silently.</p>
-<p>Then read the original piece. &quot;For fun&quot; is in the title, and it&#x27;s honest — the author clearly knew the economics and did it anyway, which is the most respectable way to lose eighty times your money. Read it as a stress test of your own setup: every surprising number in his bill has a smaller cousin waiting in yours. The Run this block below gives you the exact audit script; run it before you add another model to anything.</p>
+<p>Treat the inventory as a reading order, not a verdict. Start with the entry points, because that is what will actually run. Skim the docs to see what the project promises, then check the biggest files against those promises. If the docs and the code disagree, believe the code — and update your mental model, or send the agent back with a specific, file-level instruction. Specific beats general: &quot;explain what this function does before I run it&quot; produces evidence; &quot;make it better&quot; produces more code.</p>
+<p>Your next step is small: run the inspection on the last repository an agent touched for you, today, and compare the output to what you remember being told. If the two match, you have earned a little confidence. If they don&#x27;t, you have just caught something a green checkmark would have waved through — and that is the whole job of review, whether a human or a very confident autocomplete wrote the lines.</p>
       </section>
 
 
@@ -179,9 +178,9 @@
       <section id="why">
         <h2>Why it matters</h2>
         <ul class="checklist">
-          <li>A stale or hidden base URL can silently send requests to a paid endpoint you stopped intending to use.</li>
-          <li>Masking values while listing variable names lets you audit your setup in shared logs and pair programming without leaking keys.</li>
-          <li>Serverless and per-request model billing both punish you at aggregate scale, which is exactly where nobody is looking.</li>
+          <li>AI-generated code arrives faster than you can read it, so your targeted reading is now the main quality gate.</li>
+          <li>A read-only inventory of entry points, docs, and biggest files turns vague review anxiety into a concrete reading order.</li>
+          <li>Green builds and confident assistant messages are outputs, not evidence — the gap between them and the code is where bugs hide.</li>
         </ul>
       </section>
 
@@ -190,76 +189,81 @@
           <img class="patch" src="/assets/brand/patch-320.7f34876db4.png" srcset="/assets/brand/patch-320.7f34876db4.png 320w, /assets/brand/patch-640.ee0c24400f.png 640w" sizes="120px" alt="Patch, the Working Copy badger, holding a code card" width="120" height="120">
           <div>
             <h2 id="run-title">Run this</h2>
-            <p>Find out which provider keys and base URLs your agent can actually see, without printing a secret.</p>
+            <p>Check whether your editor still points at the Local harness, without changing a setting.</p>
           </div>
         </div>
-        <div class="run-scope"><p class="section-note">The source for this edition is the Hacker News post titled Serving Qwen via AWS Lambdas for fun and 80x negative profit. Use its project link if it names one, or run this check on your own setup.</p></div><div class="run-scope"><h3>Or run it on your own repository</h3><pre class="output"><code>python3 check-model-route.py /path/to/your/repo</code></pre></div>
+        <div class="run-scope"><p class="section-note">The source for this edition is the Stack Overflow blog post titled When AI Writes the Code, What Counts as Evidence?. Use its project link if it names one, or run this check on your own setup.</p></div><div class="run-scope"><h3>Or run it on your own repository</h3><pre class="output"><code>python3 audit-harness.py /path/to/your/repo</code></pre></div>
         <div class="run-grid">
           <div class="run-step run-code">
             <h3>Copy snippet</h3>
             <pre><code id="run-snippet">#!/usr/bin/env python3
-&quot;&quot;&quot;Report which model providers are configured, without printing secrets.
+&quot;&quot;&quot;Read-only audit of editor harness settings.
 
-Usage:
-  python3 check-model-route.py
-  python3 check-model-route.py --probe
-  python3 check-model-route.py --env-file ~/.env.local --probe
+Scans the default settings paths for VS Code, Insiders, Cursor, and VSCodium.
+Prints only keys whose names contain &quot;harness&quot; or &quot;sessiontarget&quot;. It never
+prints the whole settings file and never writes anything.
 &quot;&quot;&quot;
-import argparse, json, os, pathlib, re, urllib.parse, urllib.request
+import os
+import pathlib
+import platform
+import re
+import sys
 
-def load_env(path):
-    values = dict(os.environ)
-    if path:
-        p = pathlib.Path(path).expanduser()
-        if p.is_file():
-            for line in p.read_text(encoding=&quot;utf-8&quot;, errors=&quot;replace&quot;).splitlines():
-                m = re.match(r&quot;^([A-Za-z_][A-Za-z0-9_]*)=(.*)$&quot;, line.strip())
-                if m and m.group(1) not in values:
-                    values[m.group(1)] = m.group(2).strip().strip(&#x27;&quot;&#x27;).strip(&quot;&#x27;&quot;)
-    return values
+HOME = pathlib.Path.home()
+EDITORS = [&quot;Code&quot;, &quot;Code - Insiders&quot;, &quot;Cursor&quot;, &quot;VSCodium&quot;]
+PATTERN = re.compile(
+    r&#x27;&quot;([^&quot;]*(?:harness|sessiontarget)[^&quot;]*)&quot;\s*:\s*&#x27;
+    r&#x27;(&quot;(?:[^&quot;\\]|\\.)*&quot;|true|false|null)&#x27;,
+    re.IGNORECASE,
+)
 
-def host(url):
-    try:
-        return urllib.parse.urlsplit(url).hostname or url
-    except Exception:
-        return &quot;(invalid URL)&quot;
 
-def probe(base, key):
-    url = base.rstrip(&quot;/&quot;) + &quot;/models&quot;
-    req = urllib.request.Request(url, headers={&quot;Authorization&quot;: &quot;Bearer &quot; + key})
-    try:
-        with urllib.request.urlopen(req, timeout=15) as response:
-            body = json.load(response)
-        return &quot;, &quot;.join(str(item.get(&quot;id&quot;, &quot;?&quot;)) for item in body.get(&quot;data&quot;, [])[:8]) or &quot;(no models listed)&quot;
-    except Exception as exc:
-        return f&quot;probe failed: {type(exc).__name__}&quot;
+def settings_paths():
+    paths = []
+    for name in EDITORS:
+        if os.name == &quot;nt&quot;:
+            appdata = pathlib.Path(os.environ.get(&quot;APPDATA&quot;, HOME / &quot;AppData/Roaming&quot;))
+            paths.append(appdata / name / &quot;User&quot; / &quot;settings.json&quot;)
+        elif platform.system() == &quot;Darwin&quot;:
+            paths.append(
+                HOME / &quot;Library/Application Support&quot; / name / &quot;User&quot; / &quot;settings.json&quot;
+            )
+        else:
+            paths.append(HOME / &quot;.config&quot; / name / &quot;User&quot; / &quot;settings.json&quot;)
+    return paths
 
-parser = argparse.ArgumentParser()
-parser.add_argument(&quot;--env-file&quot;, default=&quot;~/.env.local&quot;)
-parser.add_argument(&quot;--probe&quot;, action=&quot;store_true&quot;)
-args = parser.parse_args()
-env = load_env(args.env_file)
 
-providers = {}
-for name, value in env.items():
-    m = re.match(r&quot;^([A-Z0-9]+)_BASE_URL$&quot;, name)
-    if m:
-        providers.setdefault(m.group(1), {})[&quot;base&quot;] = value
-    m = re.match(r&quot;^([A-Z0-9]+)_API_KEY$&quot;, name)
-    if m:
-        providers.setdefault(m.group(1), {})[&quot;key&quot;] = value
+def main():
+    scanned = 0
+    with_keys = 0
+    for path in settings_paths():
+        if not path.is_file():
+            continue
+        scanned += 1
+        try:
+            text = path.read_text(encoding=&quot;utf-8&quot;, errors=&quot;replace&quot;)
+        except OSError as exc:
+            print(f&quot;{path}: cannot read ({type(exc).__name__})&quot;)
+            continue
+        matches = PATTERN.findall(text)
+        print(path)
+        if not matches:
+            print(&quot;  no harness-related keys&quot;)
+            continue
+        with_keys += 1
+        for key, value in matches:
+            print(f&quot;  {key} = {value}&quot;)
 
-if not providers:
-    print(&quot;No provider variables found. Expected a NAME_BASE_URL and NAME_API_KEY pair.&quot;)
-    raise SystemExit(0)
+    if not scanned:
+        print(&quot;No editor settings files found.&quot;)
+        return 1
 
-print(&quot;provider      key        base host&quot;)
-for name in sorted(providers):
-    item = providers[name]
-    print(f&quot;{name.lower():&lt;13} {&#x27;present&#x27; if item.get(&#x27;key&#x27;) else &#x27;missing&#x27;:&lt;10} {host(item.get(&#x27;base&#x27;, &#x27;&#x27;))}&quot;)
-    if args.probe and item.get(&quot;key&quot;) and item.get(&quot;base&quot;):
-        print(f&quot;  models: {probe(item[&#x27;base&#x27;], item[&#x27;key&#x27;])}&quot;)
-print(&quot;\nNo key values were printed.&quot;)
+    print(f&quot;\nScanned {scanned} settings file(s); {with_keys} had harness-related keys.&quot;)
+    return 0
+
+
+if __name__ == &quot;__main__&quot;:
+    sys.exit(main())
 </code></pre>
             <button class="btn-orange" data-copy-target="run-snippet">
               <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
@@ -269,24 +273,22 @@ print(&quot;\nNo key values were printed.&quot;)
           <div class="run-step">
             <h3>Open full example</h3>
             <p>The complete script, with the checks described above and a short explanation.</p>
-            <a class="run-link" href="/editions/2026-11-25/run/check-model-route.py">check-model-route.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+            <a class="run-link" href="/editions/2026-11-26/run/audit-harness.py">audit-harness.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
             <p class="mono-note">Python 3.15.2 · no dependencies</p>
           </div>
           <div class="run-step">
             <h3>View source</h3>
             <p>The upstream item this edition is built on.</p>
-            <a class="run-link" href="https://noahbuilt.it/writing/qwen-on-5600-lambdas">Hacker News<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a>
-            <a class="run-link" href="/editions/2026-11-25/run/check-model-route.py">View check-model-route.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+            <a class="run-link" href="https://stackoverflow.blog/2026/11/25/when-ai-writes-the-code-what-counts-as-evidence/">Stack Overflow blog<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a>
+            <a class="run-link" href="/editions/2026-11-26/run/audit-harness.py">View audit-harness.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
           </div>
           <div class="run-step run-result">
             <h3>Check your result</h3>
-            <pre class="output">provider      key        base host
-zai           present    api.z.ai
-
-No key values were printed.</pre>
+            <pre class="output">settings.json:
+  no harness-related keys</pre>
             <p class="mono-note">Tested 2026-11-18 · Python 3.15.2 · macOS 27.3</p>
             <p class="provenance">Example output: Example output; your output will differ.</p>
-            <p class="limit">The script checks environment variables and an optional env file. It cannot see keys stored in an app keychain or a provider dashboard.</p>
+            <p class="limit">The script scans the default settings paths for VS Code, Insiders, Cursor, and VSCodium. It does not inspect extension storage or a portable install.</p>
             <p class="limit">This is a scope check, not a security audit.</p>
           </div>
         </div>
@@ -294,11 +296,11 @@ No key values were printed.</pre>
 
       <section id="agent">
         <h2>Hand it to your agent</h2>
-        <p>The agent will look through your project and shell configuration to find which model provider keys and base URLs are visible to your agent setup, printing names and masked shapes only, never the secret values themselves. It stops the moment anything would need to change a setting, and reports what it found so you decide what to keep.</p>
+        <p>The agent will walk through your repository and gather evidence only. It lists the entry points, the documentation, and the biggest files, and it stops before changing anything, because reading and editing are separate jobs.</p>
         <div class="agent-prompt">
           <h3>Agent prompt</h3>
           <p>Paste this into the coding agent you already use. It is written to inspect before editing and to stop at the approval boundary.</p>
-          <pre><code id="agent-prompt">You are auditing my setup for The Working Copy edition &quot;A man served Qwen from 5,600 Lambdas and lost 80 times his money&quot;. Work read-only until I approve changes. Read the source at https://noahbuilt.it/writing/qwen-on-5600-lambdas, list every factual claim in the article, and check each one against that source. Report any claim the source does not support and any concrete step the article asks me to take. Do not print API keys, tokens, or credential-bearing URLs. Propose the smallest correction and wait for my approval before editing.</code></pre>
+          <pre><code id="agent-prompt">You are auditing my setup for The Working Copy edition &quot;When the AI writes the code, the evidence is what you actually read&quot;. Work read-only until I approve changes. Read the source at https://stackoverflow.blog/2026/11/25/when-ai-writes-the-code-what-counts-as-evidence/, list every factual claim in the article, and check each one against that source. Report any claim the source does not support and any concrete step the article asks me to take. Do not print API keys, tokens, or credential-bearing URLs. Propose the smallest correction and wait for my approval before editing.</code></pre>
           <button class="btn-orange" data-copy-target="agent-prompt">
             <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
             <span>Copy agent prompt</span>
@@ -309,17 +311,17 @@ No key values were printed.</pre>
       <section id="watch">
         <h2>Also worth reading</h2>
         <ul class="watch-list">
-          <li><strong class="watch-title">The original write-up</strong><span class="watch-detail">&quot;Serving Qwen via AWS Lambdas for fun and 80x negative profit&quot; — the full story of the 5,600-function deployment and the eighty-to-one loss: https://noahbuilt.it/writing/qwen-on-5600-lambdas</span></li>
-          <li><strong class="watch-title">The Hacker News discussion</strong><span class="watch-detail">Seventy-seven points and eleven comments of people doing unit-cost math on the author&#x27;s behalf: https://news.ycombinator.com/item?id=50638070</span></li>
-          <li><strong class="watch-title">Vercel&#x27;s usage-based billing change</strong><span class="watch-detail">Standard builds for existing Pro teams moved to usage-based billing this week — a quieter version of the same lesson: know your per-unit route before the per-unit bill arrives. https://vercel.com/changelog/standard-builds-for-existing-pro-teams-have-moved-to-usage-based-billing</span></li>
+          <li><strong class="watch-title">When AI Writes the Code, What Counts as Evidence?</strong><span class="watch-detail">The Stack Overflow blog post behind this edition — the full argument for what does and does not count as evidence for machine-written code.</span></li>
+          <li><strong class="watch-title">Prompt Injection Fixes Need Regression Tests</strong><span class="watch-detail">A companion Stack Overflow blog piece on why security fixes for prompt injection need the same regression testing as any other bug fix.</span></li>
+          <li><strong class="watch-title">Agent swarms need more than a message board</strong><span class="watch-detail">Stack Overflow blog on multi-agent systems as distributed systems problems in disguise — useful once your agents start writing code you never see.</span></li>
         </ul>
       </section>
 
       <section id="sources">
         <h2>Sources</h2>
         <ul class="source-list source-list-inline">
-          <li><a href="https://noahbuilt.it/writing/qwen-on-5600-lambdas">Serving Qwen via AWS Lambdas for fun and 80x negative profit<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
-          <li><a href="/editions/2026-11-25/run/check-model-route.py">The runnable example used in this article<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a></li>
+          <li><a href="https://stackoverflow.blog/2026/11/25/when-ai-writes-the-code-what-counts-as-evidence/">When AI Writes the Code, What Counts as Evidence?<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
+          <li><a href="/editions/2026-11-26/run/audit-harness.py">The runnable example used in this article<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a></li>
         </ul>
       </section>
     </div>
@@ -343,8 +345,8 @@ No key values were printed.</pre>
           <p>Ideas you can run. A developer publication from Legacy AI.</p>
         </div>
       </div>
-      <p class="foot-links"><a href="/archive/">Archive</a><a href="/editions/2026-11-25/audio/2026-11-25-narration.md">Audio transcript</a><a href="https://legacyai.space">Legacy AI</a><a href="https://floydslabs.com">Floyd's Labs</a></p>
-      <p>Edition 009, 2026-11-25. The written article is authoritative.</p>
+      <p class="foot-links"><a href="/archive/">Archive</a><a href="/editions/2026-11-26/audio/2026-11-26-narration.md">Audio transcript</a><a href="https://legacyai.space">Legacy AI</a><a href="https://floydslabs.com">Floyd's Labs</a></p>
+      <p>Edition 010, 2026-11-26. The written article is authoritative.</p>
       <p>Audio edition narrated by Uncle Burt. Built locally; no external CDN.</p>
     </footer>
   </main>
@@ -354,7 +356,7 @@ No key values were printed.</pre>
       <div class="listen-head"><h2>Run this</h2><span class="chip">Patch</span></div>
       <div class="aside-run">
         <img class="aside-patch" src="/assets/brand/patch-320.7f34876db4.png" alt="Patch, the Working Copy badger" width="72" height="72">
-        <p>The route check prints hosts and key presence only. It never prints a key value.</p>
+        <p>The audit is read-only. The agent prompt is written to inspect before editing.</p>
       </div>
       <button class="btn-orange" data-copy-target="run-snippet">
         <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
@@ -364,7 +366,7 @@ No key values were printed.</pre>
         <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
         <span>Copy agent prompt</span>
       </button>
-      <a class="btn-secondary" href="/editions/2026-11-25/run/check-model-route.py">Open the full example<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+      <a class="btn-secondary" href="/editions/2026-11-26/run/audit-harness.py">Open the full example<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
     </section>
 
     <section class="about-card">

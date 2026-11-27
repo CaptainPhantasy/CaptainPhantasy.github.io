@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F5EDE0">
-<title>When the AI writes the code, the evidence is what you actually read — The Working Copy</title>
-<meta name="description" content="A Stack Overflow blog post asks what counts as evidence for machine-written code. The uncomfortable answer starts with you opening the repo yourself.">
-<meta property="og:title" content="When the AI writes the code, the evidence is what you actually read — The Working Copy">
-<meta property="og:description" content="A Stack Overflow blog post asks what counts as evidence for machine-written code. The uncomfortable answer starts with you opening the repo yourself.">
+<title>ruby2shell can corrupt memory in a default Rails app before login — The Working Copy</title>
+<meta name="description" content="The bug sits in Ruby&#x27;s string case conversion, reachable in default Rails and Sinatra apps with no authentication. First move: find out which Ruby your app actually runs.">
+<meta property="og:title" content="ruby2shell can corrupt memory in a default Rails app before login — The Working Copy">
+<meta property="og:description" content="The bug sits in Ruby&#x27;s string case conversion, reachable in default Rails and Sinatra apps with no authentication. First move: find out which Ruby your app actually runs.">
 <meta property="og:type" content="article">
 
 
@@ -91,7 +91,7 @@
 <div class="shell">
   <aside class="rail" aria-label="Article navigation">
     <div class="rail-block">
-      <p class="rail-date">November 26, 2026<span>Edition 010</span></p>
+      <p class="rail-date">November 27, 2026<span>Edition 011</span></p>
       <nav class="rail-nav" aria-label="In this article">
         <a class="rail-link" href="#story">The story</a>
         <a class="rail-link" href="#why">Why it matters</a>
@@ -120,13 +120,13 @@
     <p class="publication-intro">Practical notes from building agents, tools, and useful software. Each article connects an idea to code you can run—with source links, clear setup steps, and enough explanation to make it your own.</p>
 
     <header class="article-head">
-      <h1>When the AI writes the code, the evidence is what you actually read</h1>
-      <p class="article-lede">A new post on the Stack Overflow blog asks a question a lot of us have been quietly avoiding: when an AI writes the code, what counts as evidence that it works? The old habit — glance at the diff, trust the vibes, ship — was shaky even when a human wrote every line. Now the code arrives faster than you can read it, and &quot;it ran once&quot; is doing a lot of load-bearing work.</p>
+      <h1>ruby2shell can corrupt memory in a default Rails app before login</h1>
+      <p class="article-lede">On November nineteenth, the Ruby team disclosed a heap buffer overflow in how Ruby changes the case of strings, rated Critical, with proof-of-concept exploits that achieve remote code execution in some scenarios. Fixes shipped in Ruby three point three point fourteen, three point four point thirteen, and four point oh point ten. The uncomfortable part: a default Rails or Sinatra app can reach the bug before anyone logs in, so step one is confirming which Ruby your own repository resolves today.</p>
       <div class="meta-line">
-        <span>November 26, 2026</span>
+        <span>November 27, 2026</span>
         <span class="meta-sep" aria-hidden="true"></span>
         <span>4 min read</span>
-        <span class="chip">Developer tools</span>
+        <span class="chip">Ruby toolchain</span>
       </div>
       <p class="byline">By Legacy AI</p>
     </header>
@@ -137,7 +137,7 @@
           <span class="listen-icon" aria-hidden="true"><svg class="icon"><use href="#i-headphones"/></svg></span>
           <span class="listen-bar-copy">
             <strong id="listen-title">Listen to this article</strong>
-            <span class="mono" data-audio-clock>7:42</span>
+            <span class="mono" data-audio-clock>8:18</span>
           </span>
           <svg class="icon listen-chevron" aria-hidden="true"><use href="#i-chevron-down"/></svg>
         </button>
@@ -154,23 +154,25 @@
           <button class="listen-control" data-audio-back aria-label="Rewind 10 seconds"><span class="mono">-10</span></button>
           <button class="listen-control" data-audio-stop aria-label="Stop audio">Stop</button>
           <button class="listen-control" data-audio-forward aria-label="Forward 10 seconds"><span class="mono">+10</span></button>
-          <a class="listen-control" href="/assets/audio/2026-11-26.45a0f4651b.mp3" download>Download</a>
+          <a class="listen-control" href="/assets/audio/2026-11-27.f4a976321d.mp3" download>Download</a>
         </div>
       </div>
-      <audio id="articleAudio" src="/assets/audio/2026-11-26.45a0f4651b.mp3" preload="metadata"></audio>
+      <audio id="articleAudio" src="/assets/audio/2026-11-27.f4a976321d.mp3" preload="metadata"></audio>
     </section>
 
     <div class="article-body">
       <section id="story">
-<h2>The question is older than the tools</h2>
-<p>The post, published on the Stack Overflow blog on November twenty-fifth, frames the problem plainly in its title: when AI writes the code, what counts as evidence? Notice what the question assumes. It assumes that generated code is not self-certifying. A green test run, a successful build, an assistant that says &quot;done&quot; — none of those are evidence in the way a careful reviewer would accept from a colleague. They are outputs, and outputs can be convincing without being correct.</p>
-<p>Here is the part nobody puts on the box: this was already true. Code review has always been a claim about evidence — &quot;I read this, and here is why I believe it does what it says.&quot; What changed is throughput. When code arrives faster than you can read it, your reading becomes the bottleneck by design, and the temptation is to skip the reading and call the skipped reading a workflow improvement. The honest move is to make your reading cheaper and more targeted, not to stop doing it.</p>
-<h2>Make the read cheap: three questions per repository</h2>
-<p>The post supplies the question; here is the edition&#x27;s answer — a technique for interrogating a repository with three questions before you trust or run anything in it. First: where does execution actually start? Second: what does the project claim about itself, in its own docs? Third: where is the mass — the biggest files, where the risk and the complexity usually live? You can answer all three without changing a single file, and the Run this block below does exactly that, read-only, against your own repository. It lists the entry points a manifest or main file reveals, surfaces the documentation, and ranks the largest files so you know where your limited attention should go.</p>
-<p>Concretely: point it at a repository an agent just generated or modified. You get an inventory — the entry points, the stated purpose, the heavyweight files — in seconds, before any code executes. That inventory is your evidence-gathering pass. If the entry points include a script nobody mentioned, or the biggest file is something the assistant described as &quot;a small helper,&quot; you have found the gap between the story and the code. That gap is exactly where generated code goes wrong, and it is invisible from the outside of a chat window. The script stops before editing anything on purpose: evidence collection and modification are different jobs, and mixing them is how reviews become rubber stamps.</p>
-<h2>What to do with what you find</h2>
-<p>Treat the inventory as a reading order, not a verdict. Start with the entry points, because that is what will actually run. Skim the docs to see what the project promises, then check the biggest files against those promises. If the docs and the code disagree, believe the code — and update your mental model, or send the agent back with a specific, file-level instruction. Specific beats general: &quot;explain what this function does before I run it&quot; produces evidence; &quot;make it better&quot; produces more code.</p>
-<p>Your next step is small: run the inspection on the last repository an agent touched for you, today, and compare the output to what you remember being told. If the two match, you have earned a little confidence. If they don&#x27;t, you have just caught something a green checkmark would have waved through — and that is the whole job of review, whether a human or a very confident autocomplete wrote the lines.</p>
+<h2>What ruby2shell actually is</h2>
+<p>A heap buffer overflow means a program writes past the end of a chunk of memory it was given. Attackers who can trigger that reliably can corrupt adjacent memory and, in the worst case, get the machine to run their own instructions. That&#x27;s why &#x27;Critical&#x27; and &#x27;remote code execution&#x27; are sitting in the same sentence, and why proofs of concept already exist. In a language whose whole selling point is pleasant string handling, the bug living in case conversion is an especially cruel joke.</p>
+<p>The reach is wider than Ruby apps you wrote yourself. Veria Labs found that Rails and classic-style Sinatra applications hit the bug in their default configuration, before any authentication. Self-hosted products that bundle Ruby, including GitLab, Mastodon, Discourse, OpenProject, Chatwoot and GitHub Enterprise Server, shipped an affected Ruby in their latest release at the time of disclosure. There&#x27;s also a related integer overflow in the same string case conversion code, tracked separately, fixed in the same releases. Two bugs, one root cause, one upgrade.</p>
+<p>Cloudflare&#x27;s Web Application Firewall, a filter that sits in front of your site and blocks malicious traffic, now blocks ruby2shell for every customer including Free plans, with Block as the default action. But they say it plainly themselves: the WAF is a compensating control, not a replacement for patching, because exploits can reach the bug through paths a WAF never sees. The fix is upgrading Ruby. Everything else is a seatbelt.</p>
+<h2>Find the Ruby your app actually runs</h2>
+<p>The trap in Ruby version management is the gap between the Ruby you think you&#x27;re on and the Ruby your app resolves. Your repository pins a version in its lockfiles and version files, your terminal has whatever your version manager last installed, and production has whatever the image baked in months ago. Those are three different numbers wearing the same name badge. Before you upgrade anything, print all of them in one place.</p>
+<p>The runnable example in this edition does exactly that, against your own repository. It reads the Ruby, Rails and Bundler versions your repository resolves from its own configuration files, then reports the versions from the local toolchain as well. You&#x27;ll see something like: your repo wants one version, your local interpreter is another, and Bundler, the dependency manager that installs your gems, is a third. If the resolved Ruby is anything below three point three point fourteen, three point four point thirteen, or four point oh point ten, you&#x27;re looking at the bug, not at a rumor of it.</p>
+<p>The observable output is a short report, not a diff. It changes nothing. That matters, because the instinct during a security scare is to start typing upgrade commands immediately, and the actual first skill is knowing what state you&#x27;re in. Once you have the resolved versions, you bump the pinned Ruby in your repo&#x27;s version file, run your test suite, and let the version manager install the patched release. For self-hosted bundles like Discourse or Mastodon, watch for their patched releases rather than swapping the bundled Ruby yourself, since that&#x27;s the vendor&#x27;s plumbing, not yours.</p>
+<h2>What to do before lunch</h2>
+<p>Run the version check against any Ruby project you touch, today, before you decide it&#x27;s somebody else&#x27;s emergency. If the numbers say you&#x27;re affected, upgrade Ruby to a fixed release and then confirm your framework and gems still resolve cleanly, since a Ruby major-version jump can drag incompatible dependencies along with it. Rails and Sinatra apps on default configs are first in line because the bug is reachable pre-authentication, but any Ruby service in memory near untrusted input deserves the same five minutes.</p>
+<p>If you sit behind Cloudflare, the WAF rules are already blocking, including on Free plans, so you have a bridge while the upgrade lands. Just don&#x27;t confuse the bridge with the far shore: the Ruby team is aware of working proofs of concept, and a filter that never sees a request can&#x27;t block it. Patch the runtime, keep the seatbelt, and get back to your Friday.</p>
       </section>
 
 
@@ -178,9 +180,9 @@
       <section id="why">
         <h2>Why it matters</h2>
         <ul class="checklist">
-          <li>AI-generated code arrives faster than you can read it, so your targeted reading is now the main quality gate.</li>
-          <li>A read-only inventory of entry points, docs, and biggest files turns vague review anxiety into a concrete reading order.</li>
-          <li>Green builds and confident assistant messages are outputs, not evidence — the gap between them and the code is where bugs hide.</li>
+          <li>Default Rails and Sinatra apps reach the bug before any login, so a patched runtime is not optional diligence.</li>
+          <li>Self-hosted products like GitLab, Discourse and Mastodon shipped an affected Ruby in their latest release, so your stack may carry the bug through a dependency you never chose.</li>
+          <li>The versions your repo resolves, your shell reports and production runs can all differ; checking them in one place turns a guessing game into a five-minute task.</li>
         </ul>
       </section>
 
@@ -189,81 +191,53 @@
           <img class="patch" src="/assets/brand/patch-320.7f34876db4.png" srcset="/assets/brand/patch-320.7f34876db4.png 320w, /assets/brand/patch-640.ee0c24400f.png 640w" sizes="120px" alt="Patch, the Working Copy badger, holding a code card" width="120" height="120">
           <div>
             <h2 id="run-title">Run this</h2>
-            <p>Check whether your editor still points at the Local harness, without changing a setting.</p>
+            <p>Print the Ruby, Rails and Bundler versions your own repository resolves, plus the local toolchain, before you upgrade or chase a memory bug.</p>
           </div>
         </div>
-        <div class="run-scope"><p class="section-note">The source for this edition is the Stack Overflow blog post titled When AI Writes the Code, What Counts as Evidence?. Use its project link if it names one, or run this check on your own setup.</p></div><div class="run-scope"><h3>Or run it on your own repository</h3><pre class="output"><code>python3 audit-harness.py /path/to/your/repo</code></pre></div>
+        <div class="run-scope"><p class="section-note">The source for this edition is the Cloudflare blog post titled How Cloudflare WAF protects against ruby2shell (CVE-2026-132825). Use its project link if it names one, or run this check on your own setup.</p></div><div class="run-scope"><h3>Or run it on your own repository</h3><pre class="output"><code>python3 check-toolchain.py /path/to/your/repo</code></pre></div>
         <div class="run-grid">
           <div class="run-step run-code">
             <h3>Copy snippet</h3>
             <pre><code id="run-snippet">#!/usr/bin/env python3
-&quot;&quot;&quot;Read-only audit of editor harness settings.
-
-Scans the default settings paths for VS Code, Insiders, Cursor, and VSCodium.
-Prints only keys whose names contain &quot;harness&quot; or &quot;sessiontarget&quot;. It never
-prints the whole settings file and never writes anything.
-&quot;&quot;&quot;
-import os
+&quot;&quot;&quot;Print the Ruby, Rails and Bundler versions a project actually runs.&quot;&quot;&quot;
 import pathlib
 import platform
-import re
+import shutil
+import subprocess
 import sys
 
-HOME = pathlib.Path.home()
-EDITORS = [&quot;Code&quot;, &quot;Code - Insiders&quot;, &quot;Cursor&quot;, &quot;VSCodium&quot;]
-PATTERN = re.compile(
-    r&#x27;&quot;([^&quot;]*(?:harness|sessiontarget)[^&quot;]*)&quot;\s*:\s*&#x27;
-    r&#x27;(&quot;(?:[^&quot;\\]|\\.)*&quot;|true|false|null)&#x27;,
-    re.IGNORECASE,
-)
+
+def version(label, command):
+    if not shutil.which(command):
+        return f&quot;  {label}: not found&quot;
+    try:
+        result = subprocess.run([command, &quot;--version&quot;], capture_output=True, text=True, timeout=10)
+        line = (result.stdout or result.stderr).strip().splitlines()[0]
+        if &quot;not currently installed&quot; in line:
+            return f&quot;  {label}: not found&quot;
+        return f&quot;  {label}: {line}&quot;
+    except Exception as exc:
+        return f&quot;  {label}: error ({type(exc).__name__})&quot;
 
 
-def settings_paths():
-    paths = []
-    for name in EDITORS:
-        if os.name == &quot;nt&quot;:
-            appdata = pathlib.Path(os.environ.get(&quot;APPDATA&quot;, HOME / &quot;AppData/Roaming&quot;))
-            paths.append(appdata / name / &quot;User&quot; / &quot;settings.json&quot;)
-        elif platform.system() == &quot;Darwin&quot;:
-            paths.append(
-                HOME / &quot;Library/Application Support&quot; / name / &quot;User&quot; / &quot;settings.json&quot;
-            )
-        else:
-            paths.append(HOME / &quot;.config&quot; / name / &quot;User&quot; / &quot;settings.json&quot;)
-    return paths
+root = pathlib.Path(sys.argv[1] if len(sys.argv) &gt; 1 else &quot;.&quot;).resolve(strict=True)
+print(&quot;project:&quot;)
+for name in (&quot;Gemfile&quot;, &quot;Gemfile.lock&quot;):
+    print(f&quot;  {name}: {&#x27;found&#x27; if (root / name).is_file() else &#x27;absent&#x27;}&quot;)
+lock = root / &quot;Gemfile.lock&quot;
+if lock.is_file():
+    lines = lock.read_text(errors=&quot;replace&quot;).splitlines()
+    for number, line in enumerate(lines):
+        text = line.strip()
+        if text.startswith(&quot;rails (&quot;):
+            print(f&quot;  rails: {text[7:-1]} (Gemfile.lock)&quot;)
+        elif text == &quot;RUBY VERSION&quot; and number + 1 &lt; len(lines):
+            print(f&quot;  ruby: {lines[number + 1].strip().removeprefix(&#x27;ruby &#x27;).strip()} (Gemfile.lock)&quot;)
 
-
-def main():
-    scanned = 0
-    with_keys = 0
-    for path in settings_paths():
-        if not path.is_file():
-            continue
-        scanned += 1
-        try:
-            text = path.read_text(encoding=&quot;utf-8&quot;, errors=&quot;replace&quot;)
-        except OSError as exc:
-            print(f&quot;{path}: cannot read ({type(exc).__name__})&quot;)
-            continue
-        matches = PATTERN.findall(text)
-        print(path)
-        if not matches:
-            print(&quot;  no harness-related keys&quot;)
-            continue
-        with_keys += 1
-        for key, value in matches:
-            print(f&quot;  {key} = {value}&quot;)
-
-    if not scanned:
-        print(&quot;No editor settings files found.&quot;)
-        return 1
-
-    print(f&quot;\nScanned {scanned} settings file(s); {with_keys} had harness-related keys.&quot;)
-    return 0
-
-
-if __name__ == &quot;__main__&quot;:
-    sys.exit(main())
+print(&quot;toolchain:&quot;)
+print(f&quot;  os: {platform.system()} {platform.release()} ({platform.machine()})&quot;)
+for label, command in ((&quot;ruby&quot;, &quot;ruby&quot;), (&quot;rails&quot;, &quot;rails&quot;), (&quot;bundle&quot;, &quot;bundle&quot;)):
+    print(version(label, command))
 </code></pre>
             <button class="btn-orange" data-copy-target="run-snippet">
               <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
@@ -273,22 +247,25 @@ if __name__ == &quot;__main__&quot;:
           <div class="run-step">
             <h3>Open full example</h3>
             <p>The complete script, with the checks described above and a short explanation.</p>
-            <a class="run-link" href="/editions/2026-11-26/run/audit-harness.py">audit-harness.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+            <a class="run-link" href="/editions/2026-11-27/run/check-toolchain.py">check-toolchain.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
             <p class="mono-note">Python 3.15.2 · no dependencies</p>
           </div>
           <div class="run-step">
             <h3>View source</h3>
             <p>The upstream item this edition is built on.</p>
-            <a class="run-link" href="https://stackoverflow.blog/2026/11/25/when-ai-writes-the-code-what-counts-as-evidence/">Stack Overflow blog<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a>
-            <a class="run-link" href="/editions/2026-11-26/run/audit-harness.py">View audit-harness.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+            <a class="run-link" href="https://blog.cloudflare.com/ruby2shell-waf-protection/">Cloudflare blog<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a>
+            <a class="run-link" href="/editions/2026-11-27/run/check-toolchain.py">View check-toolchain.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
           </div>
           <div class="run-step run-result">
             <h3>Check your result</h3>
-            <pre class="output">settings.json:
-  no harness-related keys</pre>
-            <p class="mono-note">Tested 2026-11-18 · Python 3.15.2 · macOS 27.3</p>
-            <p class="provenance">Example output: Example output; your output will differ.</p>
-            <p class="limit">The script scans the default settings paths for VS Code, Insiders, Cursor, and VSCodium. It does not inspect extension storage or a portable install.</p>
+            <pre class="output">project:
+  Gemfile: found
+  Gemfile.lock: found
+  rails: 8.0.4 (Gemfile.lock)
+  ruby: 3.4.5p100 (Gemfile.lock)</pre>
+            <p class="mono-note">Tested 2026-11-23 · Python 3.15.2 · local Ruby fixture</p>
+            <p class="provenance">Example output: Excerpt from a local Ruby fixture; your Rails and Ruby versions will differ.</p>
+            <p class="limit">This reads the Gemfile and Gemfile.lock and asks the local toolchain. It does not audit the app and cannot tell you whether a CVE applies to your dependency tree. This is not a security audit. No project code is executed.</p>
             <p class="limit">This is a scope check, not a security audit.</p>
           </div>
         </div>
@@ -296,11 +273,11 @@ if __name__ == &quot;__main__&quot;:
 
       <section id="agent">
         <h2>Hand it to your agent</h2>
-        <p>The agent will walk through your repository and gather evidence only. It lists the entry points, the documentation, and the biggest files, and it stops before changing anything, because reading and editing are separate jobs.</p>
+        <p>The agent will look at how your repository declares its Ruby, Rails and Bundler versions, and compare those against what your local toolchain actually provides. It only reads files and prints versions, so nothing gets installed, upgraded or edited while it runs.</p>
         <div class="agent-prompt">
           <h3>Agent prompt</h3>
           <p>Paste this into the coding agent you already use. It is written to inspect before editing and to stop at the approval boundary.</p>
-          <pre><code id="agent-prompt">You are auditing my setup for The Working Copy edition &quot;When the AI writes the code, the evidence is what you actually read&quot;. Work read-only until I approve changes. Read the source at https://stackoverflow.blog/2026/11/25/when-ai-writes-the-code-what-counts-as-evidence/, list every factual claim in the article, and check each one against that source. Report any claim the source does not support and any concrete step the article asks me to take. Do not print API keys, tokens, or credential-bearing URLs. Propose the smallest correction and wait for my approval before editing.</code></pre>
+          <pre><code id="agent-prompt">You are auditing my setup for The Working Copy edition &quot;ruby2shell can corrupt memory in a default Rails app before login&quot;. Work read-only until I approve changes. Read the source at https://blog.cloudflare.com/ruby2shell-waf-protection/, list every factual claim in the article, and check each one against that source. Report any claim the source does not support and any concrete step the article asks me to take. Do not print API keys, tokens, or credential-bearing URLs. Propose the smallest correction and wait for my approval before editing.</code></pre>
           <button class="btn-orange" data-copy-target="agent-prompt">
             <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
             <span>Copy agent prompt</span>
@@ -311,17 +288,17 @@ if __name__ == &quot;__main__&quot;:
       <section id="watch">
         <h2>Also worth reading</h2>
         <ul class="watch-list">
-          <li><strong class="watch-title">When AI Writes the Code, What Counts as Evidence?</strong><span class="watch-detail">The Stack Overflow blog post behind this edition — the full argument for what does and does not count as evidence for machine-written code.</span></li>
-          <li><strong class="watch-title">Prompt Injection Fixes Need Regression Tests</strong><span class="watch-detail">A companion Stack Overflow blog piece on why security fixes for prompt injection need the same regression testing as any other bug fix.</span></li>
-          <li><strong class="watch-title">Agent swarms need more than a message board</strong><span class="watch-detail">Stack Overflow blog on multi-agent systems as distributed systems problems in disguise — useful once your agents start writing code you never see.</span></li>
+          <li><strong class="watch-title">The Cloudflare WAF rules for ruby2shell</strong><span class="watch-detail">Cloudflare added blocking rules for both ruby2shell and the related string-case integer overflow to its managed rulesets, free plans included, as a stopgap while you patch.</span></li>
+          <li><strong class="watch-title">Veria Labs&#x27; reach analysis</strong><span class="watch-detail">The reporting that default Rails and Sinatra configurations hit the bug pre-authentication, and that self-hosted bundlers like GitLab, Mastodon and Discourse shipped affected Rubies, came from Veria Labs.</span></li>
+          <li><strong class="watch-title">The related integer overflow fixed alongside it</strong><span class="watch-detail">A second flaw in Ruby&#x27;s string case conversion, tracked as a separate advisory, was fixed in the same three releases, so one upgrade closes both.</span></li>
         </ul>
       </section>
 
       <section id="sources">
         <h2>Sources</h2>
         <ul class="source-list source-list-inline">
-          <li><a href="https://stackoverflow.blog/2026/11/25/when-ai-writes-the-code-what-counts-as-evidence/">When AI Writes the Code, What Counts as Evidence?<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
-          <li><a href="/editions/2026-11-26/run/audit-harness.py">The runnable example used in this article<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a></li>
+          <li><a href="https://blog.cloudflare.com/ruby2shell-waf-protection/">How Cloudflare WAF protects against ruby2shell (CVE-2026-132825)<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
+          <li><a href="/editions/2026-11-27/run/check-toolchain.py">The runnable example used in this article<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a></li>
         </ul>
       </section>
     </div>
@@ -345,8 +322,8 @@ if __name__ == &quot;__main__&quot;:
           <p>Ideas you can run. A developer publication from Legacy AI.</p>
         </div>
       </div>
-      <p class="foot-links"><a href="/archive/">Archive</a><a href="/editions/2026-11-26/audio/2026-11-26-narration.md">Audio transcript</a><a href="https://legacyai.space">Legacy AI</a><a href="https://floydslabs.com">Floyd's Labs</a></p>
-      <p>Edition 010, 2026-11-26. The written article is authoritative.</p>
+      <p class="foot-links"><a href="/archive/">Archive</a><a href="/editions/2026-11-27/audio/2026-11-27-narration.md">Audio transcript</a><a href="https://legacyai.space">Legacy AI</a><a href="https://floydslabs.com">Floyd's Labs</a></p>
+      <p>Edition 011, 2026-11-27. The written article is authoritative.</p>
       <p>Audio edition narrated by Uncle Burt. Built locally; no external CDN.</p>
     </footer>
   </main>
@@ -356,7 +333,7 @@ if __name__ == &quot;__main__&quot;:
       <div class="listen-head"><h2>Run this</h2><span class="chip">Patch</span></div>
       <div class="aside-run">
         <img class="aside-patch" src="/assets/brand/patch-320.7f34876db4.png" alt="Patch, the Working Copy badger" width="72" height="72">
-        <p>The audit is read-only. The agent prompt is written to inspect before editing.</p>
+        <p>Know the version before you chase the bug.</p>
       </div>
       <button class="btn-orange" data-copy-target="run-snippet">
         <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
@@ -366,7 +343,7 @@ if __name__ == &quot;__main__&quot;:
         <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
         <span>Copy agent prompt</span>
       </button>
-      <a class="btn-secondary" href="/editions/2026-11-26/run/audit-harness.py">Open the full example<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+      <a class="btn-secondary" href="/editions/2026-11-27/run/check-toolchain.py">Open the full example<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
     </section>
 
     <section class="about-card">

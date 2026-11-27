@@ -4,6 +4,14 @@
   "publisher": "Legacy AI",
   "editions": [
     {
+      "slug": "2026-11-27",
+      "date": "2026-11-27",
+      "title": "ruby2shell can corrupt memory in a default Rails app before login",
+      "excerpt": "The bug sits in Ruby's string case conversion, reachable in default Rails and Sinatra apps with no authentication. First move: find out which Ruby your app actually runs.",
+      "duration": "8:18",
+      "url": "/editions/2026-11-27/"
+    },
+    {
       "slug": "2026-11-26",
       "date": "2026-11-26",
       "title": "When the AI writes the code, the evidence is what you actually read",

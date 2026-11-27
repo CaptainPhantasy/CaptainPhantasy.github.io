@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F5EDE0">
+<title>ruby2shell can corrupt memory in a default Rails app before login — The Working Copy</title>
+<meta name="description" content="The bug sits in Ruby&#x27;s string case conversion, reachable in default Rails and Sinatra apps with no authentication. First move: find out which Ruby your app actually runs.">
+<meta property="og:title" content="ruby2shell can corrupt memory in a default Rails app before login — The Working Copy">
+<meta property="og:description" content="The bug sits in Ruby&#x27;s string case conversion, reachable in default Rails and Sinatra apps with no authentication. First move: find out which Ruby your app actually runs.">
+<meta property="og:type" content="article">
+
+
+<link rel="icon" href="/assets/brand/working-copy-64.d32eb6afa1.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/icons/icon-192.efb52459f7.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/assets/icons/icon-512.c35d2f70d8.png">
+<link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon-180.6fdb141b90.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="The Working Copy">
+<link rel="stylesheet" href="/assets/styles.1b5d6aa369.css">
+<link rel="canonical" href="https://theworkingcopy.floydslabs.com/editions/2026-11-27/">
+<meta property="og:url" content="https://theworkingcopy.floydslabs.com/editions/2026-11-27/">
+<meta property="og:image" content="https://theworkingcopy.floydslabs.com/assets/icons/icon-512.c35d2f70d8.png">
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false"><symbol id="i-arrow-up-right" viewBox="0 0 24 24"><path d="M7 7h10v10" />
+  <path d="M7 17 17 7" /></symbol>
+<symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4" />
+  <path d="M16 2v4" />
+  <rect width="18" height="18" x="3" y="4" rx="2" />
+  <path d="M3 10h18" /></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" /></symbol>
+<symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></symbol>
+<symbol id="i-chevron-up" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6" /></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><path d="M12 6v6l4 2" />
+  <circle cx="12" cy="12" r="10" /></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 15V3" />
+  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+  <path d="m7 10 5 5 5-5" /></symbol>
+<symbol id="i-external-link" viewBox="0 0 24 24"><path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></symbol>
+<symbol id="i-headphones" viewBox="0 0 24 24"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" /></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" /></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><rect x="14" y="3" width="5" height="18" rx="1" />
+  <rect x="5" y="3" width="5" height="18" rx="1" /></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z" /></symbol>
+<symbol id="i-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2" />
+  <rect width="20" height="8" x="2" y="14" rx="2" ry="2" />
+  <line x1="6" x2="6.01" y1="6" y2="6" />
+  <line x1="6" x2="6.01" y1="18" y2="18" /></symbol>
+<symbol id="i-share-2" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3" />
+  <circle cx="6" cy="12" r="3" />
+  <circle cx="18" cy="19" r="3" />
+  <line x1="8.59" x2="15.42" y1="13.51" y2="17.49" />
+  <line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></symbol>
+<symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+  <path d="m9 12 2 2 4-4" /></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18" />
+  <path d="m6 6 12 12" /></symbol></svg>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="topbar" id="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#main" aria-label="The Working Copy">
+      <img class="brand-logo" src="/assets/brand/working-copy-256.aff5e3278e.png" alt="" width="36" height="36">
+      <span class="brand-name">The Working Copy</span>
+    </a>
+    <div class="top-actions">
+      <a class="top-link" href="/archive/">Archive</a>
+      <a class="top-link" href="https://legacyai.space">Legacy AI</a>
+      <a class="top-link" href="https://floydslabs.com">Floyd's Labs</a>
+      <button class="icon-btn" data-open-audio aria-label="Listen to this article">
+        <svg class="icon" aria-hidden="true"><use href="#i-headphones"/></svg>
+      </button>
+      <button class="icon-btn" id="shareTop" aria-label="Share this article">
+        <svg class="icon" aria-hidden="true"><use href="#i-share-2"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <aside class="rail" aria-label="Article navigation">
+    <div class="rail-block">
+      <p class="rail-date">November 27, 2026<span>Edition 011</span></p>
+      <nav class="rail-nav" aria-label="In this article">
+        <a class="rail-link" href="#story">The story</a>
+        <a class="rail-link" href="#why">Why it matters</a>
+        <a class="rail-link" href="#run">Run this</a>
+        <a class="rail-link" href="#agent">Agent prompt</a>
+        <a class="rail-link" href="#watch">Also worth reading</a>
+        <a class="rail-link" href="#sources">Sources</a>
+      </nav>
+    </div>
+    <div class="rail-block">
+      <p class="rail-label">Published by</p>
+      <a class="publisher-link" href="https://legacyai.space"><img src="/assets/brand/legacy-ai-256.001d2635f0.png" alt="" width="32" height="32">Legacy AI</a>
+      <a class="publisher-link" href="https://floydslabs.com"><span class="publisher-dot" aria-hidden="true"></span>Floyd's Labs</a>
+    </div>
+  </aside>
+
+  <main id="main" class="main">
+    <div class="masthead">
+      <img class="masthead-logo" src="/assets/brand/working-copy-256.aff5e3278e.png" alt="The Working Copy circular logo" width="72" height="72">
+      <div class="masthead-copy">
+        <p class="masthead-name">The Working Copy</p>
+        <p class="masthead-tagline">Ideas you can run.</p>
+        <p class="masthead-publisher">A developer publication from Legacy AI.</p>
+      </div>
+    </div>
+    <p class="publication-intro">Practical notes from building agents, tools, and useful software. Each article connects an idea to code you can run—with source links, clear setup steps, and enough explanation to make it your own.</p>
+
+    <header class="article-head">
+      <h1>ruby2shell can corrupt memory in a default Rails app before login</h1>
+      <p class="article-lede">On November nineteenth, the Ruby team disclosed a heap buffer overflow in how Ruby changes the case of strings, rated Critical, with proof-of-concept exploits that achieve remote code execution in some scenarios. Fixes shipped in Ruby three point three point fourteen, three point four point thirteen, and four point oh point ten. The uncomfortable part: a default Rails or Sinatra app can reach the bug before anyone logs in, so step one is confirming which Ruby your own repository resolves today.</p>
+      <div class="meta-line">
+        <span>November 27, 2026</span>
+        <span class="meta-sep" aria-hidden="true"></span>
+        <span>4 min read</span>
+        <span class="chip">Ruby toolchain</span>
+      </div>
+      <p class="byline">By Legacy AI</p>
+    </header>
+
+    <section class="listen-panel" id="listen" aria-labelledby="listen-title" data-audio-panel>
+      <div class="listen-bar">
+        <button class="listen-toggle" data-audio-expand aria-expanded="false" aria-controls="audioExtra">
+          <span class="listen-icon" aria-hidden="true"><svg class="icon"><use href="#i-headphones"/></svg></span>
+          <span class="listen-bar-copy">
+            <strong id="listen-title">Listen to this article</strong>
+            <span class="mono" data-audio-clock>8:18</span>
+          </span>
+          <svg class="icon listen-chevron" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+        </button>
+        <button class="play play-compact" data-audio-toggle aria-label="Play the audio edition">
+          <svg class="icon icon-play" aria-hidden="true"><use href="#i-play"/></svg>
+          <svg class="icon icon-pause" aria-hidden="true"><use href="#i-pause"/></svg>
+        </button>
+      </div>
+      <div class="listen-seek" role="slider" tabindex="0" aria-label="Seek the audio edition" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-audio-seek>
+        <span class="track"><span class="track-fill" data-audio-fill></span></span>
+      </div>
+      <div class="listen-extra" id="audioExtra">
+        <div class="listen-extra-inner">
+          <button class="listen-control" data-audio-back aria-label="Rewind 10 seconds"><span class="mono">-10</span></button>
+          <button class="listen-control" data-audio-stop aria-label="Stop audio">Stop</button>
+          <button class="listen-control" data-audio-forward aria-label="Forward 10 seconds"><span class="mono">+10</span></button>
+          <a class="listen-control" href="/assets/audio/2026-11-27.f4a976321d.mp3" download>Download</a>
+        </div>
+      </div>
+      <audio id="articleAudio" src="/assets/audio/2026-11-27.f4a976321d.mp3" preload="metadata"></audio>
+    </section>
+
+    <div class="article-body">
+      <section id="story">
+<h2>What ruby2shell actually is</h2>
+<p>A heap buffer overflow means a program writes past the end of a chunk of memory it was given. Attackers who can trigger that reliably can corrupt adjacent memory and, in the worst case, get the machine to run their own instructions. That&#x27;s why &#x27;Critical&#x27; and &#x27;remote code execution&#x27; are sitting in the same sentence, and why proofs of concept already exist. In a language whose whole selling point is pleasant string handling, the bug living in case conversion is an especially cruel joke.</p>
+<p>The reach is wider than Ruby apps you wrote yourself. Veria Labs found that Rails and classic-style Sinatra applications hit the bug in their default configuration, before any authentication. Self-hosted products that bundle Ruby, including GitLab, Mastodon, Discourse, OpenProject, Chatwoot and GitHub Enterprise Server, shipped an affected Ruby in their latest release at the time of disclosure. There&#x27;s also a related integer overflow in the same string case conversion code, tracked separately, fixed in the same releases. Two bugs, one root cause, one upgrade.</p>
+<p>Cloudflare&#x27;s Web Application Firewall, a filter that sits in front of your site and blocks malicious traffic, now blocks ruby2shell for every customer including Free plans, with Block as the default action. But they say it plainly themselves: the WAF is a compensating control, not a replacement for patching, because exploits can reach the bug through paths a WAF never sees. The fix is upgrading Ruby. Everything else is a seatbelt.</p>
+<h2>Find the Ruby your app actually runs</h2>
+<p>The trap in Ruby version management is the gap between the Ruby you think you&#x27;re on and the Ruby your app resolves. Your repository pins a version in its lockfiles and version files, your terminal has whatever your version manager last installed, and production has whatever the image baked in months ago. Those are three different numbers wearing the same name badge. Before you upgrade anything, print all of them in one place.</p>
+<p>The runnable example in this edition does exactly that, against your own repository. It reads the Ruby, Rails and Bundler versions your repository resolves from its own configuration files, then reports the versions from the local toolchain as well. You&#x27;ll see something like: your repo wants one version, your local interpreter is another, and Bundler, the dependency manager that installs your gems, is a third. If the resolved Ruby is anything below three point three point fourteen, three point four point thirteen, or four point oh point ten, you&#x27;re looking at the bug, not at a rumor of it.</p>
+<p>The observable output is a short report, not a diff. It changes nothing. That matters, because the instinct during a security scare is to start typing upgrade commands immediately, and the actual first skill is knowing what state you&#x27;re in. Once you have the resolved versions, you bump the pinned Ruby in your repo&#x27;s version file, run your test suite, and let the version manager install the patched release. For self-hosted bundles like Discourse or Mastodon, watch for their patched releases rather than swapping the bundled Ruby yourself, since that&#x27;s the vendor&#x27;s plumbing, not yours.</p>
+<h2>What to do before lunch</h2>
+<p>Run the version check against any Ruby project you touch, today, before you decide it&#x27;s somebody else&#x27;s emergency. If the numbers say you&#x27;re affected, upgrade Ruby to a fixed release and then confirm your framework and gems still resolve cleanly, since a Ruby major-version jump can drag incompatible dependencies along with it. Rails and Sinatra apps on default configs are first in line because the bug is reachable pre-authentication, but any Ruby service in memory near untrusted input deserves the same five minutes.</p>
+<p>If you sit behind Cloudflare, the WAF rules are already blocking, including on Free plans, so you have a bridge while the upgrade lands. Just don&#x27;t confuse the bridge with the far shore: the Ruby team is aware of working proofs of concept, and a filter that never sees a request can&#x27;t block it. Patch the runtime, keep the seatbelt, and get back to your Friday.</p>
+      </section>
+
+
+
+      <section id="why">
+        <h2>Why it matters</h2>
+        <ul class="checklist">
+          <li>Default Rails and Sinatra apps reach the bug before any login, so a patched runtime is not optional diligence.</li>
+          <li>Self-hosted products like GitLab, Discourse and Mastodon shipped an affected Ruby in their latest release, so your stack may carry the bug through a dependency you never chose.</li>
+          <li>The versions your repo resolves, your shell reports and production runs can all differ; checking them in one place turns a guessing game into a five-minute task.</li>
+        </ul>
+      </section>
+
+      <section class="run-this" id="run" aria-labelledby="run-title">
+        <div class="run-head">
+          <img class="patch" src="/assets/brand/patch-320.7f34876db4.png" srcset="/assets/brand/patch-320.7f34876db4.png 320w, /assets/brand/patch-640.ee0c24400f.png 640w" sizes="120px" alt="Patch, the Working Copy badger, holding a code card" width="120" height="120">
+          <div>
+            <h2 id="run-title">Run this</h2>
+            <p>Print the Ruby, Rails and Bundler versions your own repository resolves, plus the local toolchain, before you upgrade or chase a memory bug.</p>
+          </div>
+        </div>
+        <div class="run-scope"><p class="section-note">The source for this edition is the Cloudflare blog post titled How Cloudflare WAF protects against ruby2shell (CVE-2026-132825). Use its project link if it names one, or run this check on your own setup.</p></div><div class="run-scope"><h3>Or run it on your own repository</h3><pre class="output"><code>python3 check-toolchain.py /path/to/your/repo</code></pre></div>
+        <div class="run-grid">
+          <div class="run-step run-code">
+            <h3>Copy snippet</h3>
+            <pre><code id="run-snippet">#!/usr/bin/env python3
+&quot;&quot;&quot;Print the Ruby, Rails and Bundler versions a project actually runs.&quot;&quot;&quot;
+import pathlib
+import platform
+import shutil
+import subprocess
+import sys
+
+
+def version(label, command):
+    if not shutil.which(command):
+        return f&quot;  {label}: not found&quot;
+    try:
+        result = subprocess.run([command, &quot;--version&quot;], capture_output=True, text=True, timeout=10)
+        line = (result.stdout or result.stderr).strip().splitlines()[0]
+        if &quot;not currently installed&quot; in line:
+            return f&quot;  {label}: not found&quot;
+        return f&quot;  {label}: {line}&quot;
+    except Exception as exc:
+        return f&quot;  {label}: error ({type(exc).__name__})&quot;
+
+
+root = pathlib.Path(sys.argv[1] if len(sys.argv) &gt; 1 else &quot;.&quot;).resolve(strict=True)
+print(&quot;project:&quot;)
+for name in (&quot;Gemfile&quot;, &quot;Gemfile.lock&quot;):
+    print(f&quot;  {name}: {&#x27;found&#x27; if (root / name).is_file() else &#x27;absent&#x27;}&quot;)
+lock = root / &quot;Gemfile.lock&quot;
+if lock.is_file():
+    lines = lock.read_text(errors=&quot;replace&quot;).splitlines()
+    for number, line in enumerate(lines):
+        text = line.strip()
+        if text.startswith(&quot;rails (&quot;):
+            print(f&quot;  rails: {text[7:-1]} (Gemfile.lock)&quot;)
+        elif text == &quot;RUBY VERSION&quot; and number + 1 &lt; len(lines):
+            print(f&quot;  ruby: {lines[number + 1].strip().removeprefix(&#x27;ruby &#x27;).strip()} (Gemfile.lock)&quot;)
+
+print(&quot;toolchain:&quot;)
+print(f&quot;  os: {platform.system()} {platform.release()} ({platform.machine()})&quot;)
+for label, command in ((&quot;ruby&quot;, &quot;ruby&quot;), (&quot;rails&quot;, &quot;rails&quot;), (&quot;bundle&quot;, &quot;bundle&quot;)):
+    print(version(label, command))
+</code></pre>
+            <button class="btn-orange" data-copy-target="run-snippet">
+              <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
+              <span>Copy snippet</span>
+            </button>
+          </div>
+          <div class="run-step">
+            <h3>Open full example</h3>
+            <p>The complete script, with the checks described above and a short explanation.</p>
+            <a class="run-link" href="/editions/2026-11-27/run/check-toolchain.py">check-toolchain.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+            <p class="mono-note">Python 3.15.2 · no dependencies</p>
+          </div>
+          <div class="run-step">
+            <h3>View source</h3>
+            <p>The upstream item this edition is built on.</p>
+            <a class="run-link" href="https://blog.cloudflare.com/ruby2shell-waf-protection/">Cloudflare blog<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a>
+            <a class="run-link" href="/editions/2026-11-27/run/check-toolchain.py">View check-toolchain.py<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+          </div>
+          <div class="run-step run-result">
+            <h3>Check your result</h3>
+            <pre class="output">project:
+  Gemfile: found
+  Gemfile.lock: found
+  rails: 8.0.4 (Gemfile.lock)
+  ruby: 3.4.5p100 (Gemfile.lock)</pre>
+            <p class="mono-note">Tested 2026-11-23 · Python 3.15.2 · local Ruby fixture</p>
+            <p class="provenance">Example output: Excerpt from a local Ruby fixture; your Rails and Ruby versions will differ.</p>
+            <p class="limit">This reads the Gemfile and Gemfile.lock and asks the local toolchain. It does not audit the app and cannot tell you whether a CVE applies to your dependency tree. This is not a security audit. No project code is executed.</p>
+            <p class="limit">This is a scope check, not a security audit.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="agent">
+        <h2>Hand it to your agent</h2>
+        <p>The agent will look at how your repository declares its Ruby, Rails and Bundler versions, and compare those against what your local toolchain actually provides. It only reads files and prints versions, so nothing gets installed, upgraded or edited while it runs.</p>
+        <div class="agent-prompt">
+          <h3>Agent prompt</h3>
+          <p>Paste this into the coding agent you already use. It is written to inspect before editing and to stop at the approval boundary.</p>
+          <pre><code id="agent-prompt">You are auditing my setup for The Working Copy edition &quot;ruby2shell can corrupt memory in a default Rails app before login&quot;. Work read-only until I approve changes. Read the source at https://blog.cloudflare.com/ruby2shell-waf-protection/, list every factual claim in the article, and check each one against that source. Report any claim the source does not support and any concrete step the article asks me to take. Do not print API keys, tokens, or credential-bearing URLs. Propose the smallest correction and wait for my approval before editing.</code></pre>
+          <button class="btn-orange" data-copy-target="agent-prompt">
+            <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
+            <span>Copy agent prompt</span>
+          </button>
+        </div>
+      </section>
+
+      <section id="watch">
+        <h2>Also worth reading</h2>
+        <ul class="watch-list">
+          <li><strong class="watch-title">The Cloudflare WAF rules for ruby2shell</strong><span class="watch-detail">Cloudflare added blocking rules for both ruby2shell and the related string-case integer overflow to its managed rulesets, free plans included, as a stopgap while you patch.</span></li>
+          <li><strong class="watch-title">Veria Labs&#x27; reach analysis</strong><span class="watch-detail">The reporting that default Rails and Sinatra configurations hit the bug pre-authentication, and that self-hosted bundlers like GitLab, Mastodon and Discourse shipped affected Rubies, came from Veria Labs.</span></li>
+          <li><strong class="watch-title">The related integer overflow fixed alongside it</strong><span class="watch-detail">A second flaw in Ruby&#x27;s string case conversion, tracked as a separate advisory, was fixed in the same three releases, so one upgrade closes both.</span></li>
+        </ul>
+      </section>
+
+      <section id="sources">
+        <h2>Sources</h2>
+        <ul class="source-list source-list-inline">
+          <li><a href="https://blog.cloudflare.com/ruby2shell-waf-protection/">How Cloudflare WAF protects against ruby2shell (CVE-2026-132825)<svg class="icon icon-sm" aria-hidden="true"><use href="#i-external-link"/></svg></a></li>
+          <li><a href="/editions/2026-11-27/run/check-toolchain.py">The runnable example used in this article<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a></li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="share-copy">
+      <div>
+        <p class="share-copy-title">Share this article</p>
+        <p class="section-note">Send the link to someone who should read it, or copy it into a post.</p>
+      </div>
+      <button class="btn-outline" id="copyLink">
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
+        <span>Copy link</span>
+      </button>
+    </section>
+
+    <footer class="edition-foot">
+      <div class="publisher">
+        <img src="/assets/brand/legacy-ai-256.001d2635f0.png" alt="Legacy AI" width="40" height="40">
+        <div>
+          <p class="publisher-name">The Working Copy</p>
+          <p>Ideas you can run. A developer publication from Legacy AI.</p>
+        </div>
+      </div>
+      <p class="foot-links"><a href="/archive/">Archive</a><a href="/editions/2026-11-27/audio/2026-11-27-narration.md">Audio transcript</a><a href="https://legacyai.space">Legacy AI</a><a href="https://floydslabs.com">Floyd's Labs</a></p>
+      <p>Edition 011, 2026-11-27. The written article is authoritative.</p>
+      <p>Audio edition narrated by Uncle Burt. Built locally; no external CDN.</p>
+    </footer>
+  </main>
+
+  <aside class="aside" aria-label="Run this and about">
+    <section class="listen-card glass">
+      <div class="listen-head"><h2>Run this</h2><span class="chip">Patch</span></div>
+      <div class="aside-run">
+        <img class="aside-patch" src="/assets/brand/patch-320.7f34876db4.png" alt="Patch, the Working Copy badger" width="72" height="72">
+        <p>Know the version before you chase the bug.</p>
+      </div>
+      <button class="btn-orange" data-copy-target="run-snippet">
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
+        <span>Copy snippet</span>
+      </button>
+      <button class="btn-secondary" data-copy-target="agent-prompt">
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-copy"/></svg>
+        <span>Copy agent prompt</span>
+      </button>
+      <a class="btn-secondary" href="/editions/2026-11-27/run/check-toolchain.py">Open the full example<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
+    </section>
+
+    <section class="about-card">
+      <h2>About The Working Copy</h2>
+      <p>Practical notes from building agents, tools, and useful software. Each article connects an idea to code you can run.</p>
+      <p class="mono-note">Published by Legacy AI. Also on Floyd's Labs.</p>
+    </section>
+
+    <section class="evidence-card">
+      <h2>Audio edition</h2>
+      <p class="section-note">Narrated by Uncle Burt. The written article remains authoritative.</p>
+      <a class="btn-secondary" href="#listen" data-open-audio>Listen to this article</a>
+    </section>
+  </aside>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="/assets/app.088fed186b.js"></script>
+</body>
+</html>
